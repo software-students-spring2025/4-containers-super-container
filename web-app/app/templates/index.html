@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图像识别结果</title>
+    <style>
+        body { font-family: sans-serif; padding: 2rem; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { padding: 8px 12px; border: 1px solid #ccc; text-align: center; }
+        th { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h2>图像识别结果展示</h2>
+    <table>
+        <tr>
+            <th>文件名</th>
+            <th>平均像素值</th>
+            <th>是否过暗</th>
+            <th>时间戳</th>
+        </tr>
+        {% for item in data %}
+        <tr>
+            <td>{{ item.filename }}</td>
+            <td>{{ "%.2f"|format(item.average_pixel_value) }}</td>
+            <td>{{ "✅" if item.is_dark else "❌" }}</td>
+            <td>{{ item.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
