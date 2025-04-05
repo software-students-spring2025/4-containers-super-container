@@ -1,5 +1,7 @@
-pymongo
 opencv-python
+fer
+pymongo
 numpy
-pytest
-coverage
+moviepy
+deepface
+

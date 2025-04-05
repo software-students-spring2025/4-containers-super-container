@@ -1,18 +1,21 @@
+version: '3'
 services:
   mongodb:
     image: mongo
-    container_name: mongodb
+    container_name: mongo
     ports:
       - "27017:27017"
 
-  ml-client:
+  client:
     build: ./machine-learning-client
     depends_on:
       - mongodb
+    devices:
+      - "/dev/video0:/dev/video0"
 
-  web-app:
+  web:
     build: ./web-app
-    ports:
-      - "5000:5000"
     depends_on:
       - mongodb
+    ports:
+      - "5000:5000"
