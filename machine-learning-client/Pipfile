@@ -7,11 +7,11 @@ verify_ssl = true
 python_version = "3.10"
 
 [packages]
-tensorflow-cpu = "==2.13.0"
-keras = "==2.13.0"
+tensorflow-cpu = "==2.12.0"
+keras = "==2.12.0"
 numpy = "==1.23.5"
 opencv-python = "*"
-deepface = "*"
+deepface = "==0.0.79"
 pymongo = "*"
 tf-keras = "*"
 
