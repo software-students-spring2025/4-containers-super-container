@@ -14,6 +14,9 @@ opencv-python = "*"
 deepface = "==0.0.79"
 pymongo = "*"
 
+[packages."tensorflow-estimator"]
+version = "==2.12.0"
+markers = "python_version < '3.10'"  # 防止安装不兼容版本
 
 [dev-packages]
 pytest = "*"
