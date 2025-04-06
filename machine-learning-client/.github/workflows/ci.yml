@@ -32,6 +32,7 @@ jobs:
           pip install pylint black pytest pytest-cov mongomock
 
       - name: Lint with pylint
+        working-directory: machine-learning-client
         run: |
           python -m pylint app tests --exit-zero
 
