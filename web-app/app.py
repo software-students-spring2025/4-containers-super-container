@@ -4,7 +4,6 @@ Flask Web App for displaying sensor data and ML analysis results
 """
 
 import os
-import datetime
 from flask import Flask, render_template, jsonify
 from pymongo import MongoClient
 
@@ -85,7 +84,9 @@ def get_stats():
         # Get counts of different environment predictions
         hot_count = collection.count_documents({"ml_environment_prediction": "Hot"})
         cold_count = collection.count_documents({"ml_environment_prediction": "Cold"})
-        comfortable_count = collection.count_documents({"ml_environment_prediction": "Comfortable"})
+        comfortable_count = collection.count_documents(
+            {"ml_environment_prediction": "Comfortable"}
+        )
         
         stats = {
             "total_readings": total_count,
