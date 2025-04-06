@@ -3,30 +3,36 @@ import pytest
 import numpy as np
 import cv2
 from unittest.mock import patch, MagicMock
-import app.main as main# pylint: disable=import-error
+import app.main as main  # pylint: disable=import-error
+
 
 def test_capture_image_mock(monkeypatch):
     # 模拟摄像头返回
     class DummyCapture:
-        def read(self): return True, 'fake_frame'
-        def release(self): pass
+        def read(self):
+            return True, "fake_frame"
+
+        def release(self):
+            pass
+
     monkeypatch.setattr("cv2.VideoCapture", lambda _: DummyCapture())
     frame = main.capture_image()
-    assert frame == 'fake_frame'
+    assert frame == "fake_frame"
+
 
 def test_analyze_emotion_mock():
     # 模拟 DeepFace 返回情绪分析
     with patch("app.main.DeepFace.analyze") as mock_analyze:
-        mock_analyze.return_value = [{
-            "dominant_emotion": "happy",
-            "emotion": {
-                "happy": np.float32(95.5),
-                "sad": np.float32(3.2)
+        mock_analyze.return_value = [
+            {
+                "dominant_emotion": "happy",
+                "emotion": {"happy": np.float32(95.5), "sad": np.float32(3.2)},
             }
-        }]
+        ]
         result = main.analyze_emotion("dummy_img")
         assert result["dominant_emotion"] == "happy"
         assert isinstance(result["emotion_scores"]["happy"], np.float32)
+
 
 def test_save_image_to_file_creates_image(tmp_path):
     dummy_image = np.zeros((100, 100, 3), dtype=np.uint8)
@@ -37,14 +43,12 @@ def test_save_image_to_file_creates_image(tmp_path):
     assert os.path.exists(path)
     main.IMAGE_DIR = old_dir
 
+
 def test_save_analysis(monkeypatch, tmp_path):
     dummy_image = np.zeros((100, 100, 3), dtype=np.uint8)
     dummy_result = {
         "dominant_emotion": "sad",
-        "emotion_scores": {
-            "happy": np.float32(88.8),
-            "sad": np.float32(11.2)
-        }
+        "emotion_scores": {"happy": np.float32(88.8), "sad": np.float32(11.2)},
     }
 
     # 模拟 MongoDB 插入
