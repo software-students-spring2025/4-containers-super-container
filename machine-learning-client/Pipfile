@@ -13,7 +13,7 @@ numpy = "==1.23.5"
 opencv-python = "*"
 deepface = "==0.0.79"
 pymongo = "*"
-tf-keras = "*"
+
 
 [dev-packages]
 pytest = "*"
