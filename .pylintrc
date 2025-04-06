@@ -1,0 +1,29 @@
+[MASTER]
+ignore=venv
+jobs=1
+load-plugins=pylint.extensions.docparams
+
+[MESSAGES CONTROL]
+disable=
+    broad-exception-caught,  # 捕获通用 Exception 的警告
+    missing-function-docstring,  # 忽略函数缺少 docstring 的提示
+    missing-module-docstring,  # 忽略模块缺少 docstring 的提示
+    too-few-public-methods  # 忽略类方法数过少的提示
+
+[FORMAT]
+max-line-length=100
+indent-string='    '
+
+[LOGGING]
+logging-modules=logging
+
+[REPORTS]
+output-format=colorized
+reports=no
+evaluation=10.0 - ((float(5 * error + warning + refactor + convention)) / statement) * 10
+
+[TYPECHECK]
+ignored-modules=cv2,deepface
+
+[REFACTORING]
+max-nested-blocks=5
