@@ -43,4 +43,4 @@ jobs:
         if: ${{ hashFiles(format('{0}/**/*.py', matrix.subdir)) != '' }}
         working-directory: ${{ matrix.subdir }}
         run: |
-          pipenv run black --diff --check . || echo "⚠️ Formatting check failed"
+          pipenv run black --diff --check . || echo "⚠️ Code needs formatting (black)"

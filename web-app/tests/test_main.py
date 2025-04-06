@@ -6,7 +6,9 @@ import pytest
 from unittest.mock import patch
 
 # 添加 app 路径到导入路径中
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'app')))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "app"))
+)
 
 from main import app, collection  # pylint: disable=import-error
 
@@ -24,7 +26,7 @@ def test_index_route(client_fixture):
     mock_record = {
         "timestamp": "2025-04-06T12:00:00Z",
         "dominant_emotion": "happy",
-        "image_path": "images/fake.jpg"
+        "image_path": "images/fake.jpg",
     }
 
     with patch.object(collection, "find") as mock_find:
@@ -41,4 +43,3 @@ def test_serve_image_route(client_fixture):
         mock_send.return_value = "mocked image"
         response = client_fixture.get("/images/fake.jpg")
         assert response.status_code == 200
-        
