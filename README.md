@@ -1,8 +1,5 @@
 # Environment Sensor Analysis System
 
-[![ML Client CI](https://github.com/Your-Username/4-containers-super-container/actions/workflows/ml-client-ci.yml/badge.svg)](https://github.com/Your-Username/4-containers-super-container/actions/workflows/ml-client-ci.yml)
-[![Web App CI](https://github.com/Your-Username/4-containers-super-container/actions/workflows/web-app-ci.yml/badge.svg)](https://github.com/Your-Username/4-containers-super-container/actions/workflows/web-app-ci.yml)
-
 A containerized application that collects environmental sensor data, performs machine learning analysis, and displays the results through a web interface. The system consists of three interconnected Docker containers:
 
 1. **MongoDB Database** - Stores sensor readings and analysis results
@@ -11,7 +8,7 @@ A containerized application that collects environmental sensor data, performs ma
 
 ## Team Members
 
-- [Your Name](https://github.com/Your-Username)
+- [Xingjian Zhang](https://github.com/ScottZXJ123)
 - [Team Member 2](https://github.com/TeamMember2)
 - [Team Member 3](https://github.com/TeamMember3)
 
