@@ -47,7 +47,7 @@ def save_image_to_file(image):
 def save_analysis(image, analysis_result):
     filepath = save_image_to_file(image)
 
-    # ✅ 强制将所有数值转换为 Python float
+    # 强制将所有数值转换为 Python float
     emotion_scores_raw = analysis_result["emotion_scores"]
     emotion_scores_clean = {k: float(v) for k, v in emotion_scores_raw.items()}
 
@@ -59,7 +59,7 @@ def save_analysis(image, analysis_result):
         "timestamp": datetime.utcnow(),
         "image_path": filepath,
         "dominant_emotion": analysis_result["dominant_emotion"],
-        "emotion_scores": emotion_scores_clean,  # <== 这里使用转换过的字典
+        "emotion_scores": emotion_scores_clean,
     }
 
     collection.insert_one(doc)
