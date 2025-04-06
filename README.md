@@ -44,6 +44,7 @@ The system uses a microservices architecture with three containers:
 
 2. Start all containers with Docker Compose:
    ```bash
+   docker-compose down
    docker-compose up --build
    ```
 
