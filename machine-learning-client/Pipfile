@@ -7,16 +7,13 @@ verify_ssl = true
 python_version = "3.10"
 
 [packages]
-tensorflow-cpu = "==2.12.0"
-keras = "==2.12.0"
-numpy = "==1.23.5"
 opencv-python = "*"
-deepface = "==0.0.79"
+deepface = "*"
 pymongo = "*"
+numpy = "*"
+tensorflow = "*"
+pytest = "*"
 
-[packages."tensorflow-intel"]
-version = "*"
-markers = "sys_platform == 'nonexistent'"
 
 [dev-packages]
 pytest = "*"
