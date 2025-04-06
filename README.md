@@ -48,13 +48,13 @@ The system uses a microservices architecture with three containers:
    ```
 
 3. Access the web dashboard:
-   - Open your browser and go to [http://localhost:5000](http://localhost:5000)
+   - Open your browser and go to [http://localhost:8080](http://localhost:8080)
 
 ### Container Details
 
 - **MongoDB**: Runs on port 27017 (accessible within the container network)
 - **ML Client**: Automatically collects and analyzes data every 10 seconds
-- **Web App**: Accessible at http://localhost:5000
+- **Web App**: Accessible at http://localhost:8080
 
 ## Development
 
