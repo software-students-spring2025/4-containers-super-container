@@ -1,11 +1,11 @@
+pylint
+black
+pytest
+pytest-cov
+mongomock
 opencv-python
 deepface
 pymongo
 numpy
 Flask
-mongomock
-pytest
-pytest-cov
-black
-pylint
 
