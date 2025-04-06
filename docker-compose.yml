@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  # MongoDB database container
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-data:/data/db
+    networks:
+      - app-network
+
+  # Machine Learning client container
+  ml-client:
+    build: ./machine-learning-client
+    container_name: ml-client
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # Web App container
+  web-app:
+    build: ./web-app
+    container_name: web-app
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+    ports:
+      - "8080:5000"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge 

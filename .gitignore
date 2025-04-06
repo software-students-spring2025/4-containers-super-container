@@ -147,3 +147,18 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# MongoDB data directory
+mongo-data/
+
+# Logs
+*.log
+
+# Docker
+.docker/
