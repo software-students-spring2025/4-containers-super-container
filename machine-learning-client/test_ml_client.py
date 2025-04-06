@@ -6,8 +6,6 @@ Tests for the Machine Learning Client
 import unittest
 from unittest.mock import patch, MagicMock
 import datetime
-import pytest
-import numpy as np
 from main import (
     generate_sensor_data,
     analyze_data,

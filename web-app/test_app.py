@@ -7,11 +7,11 @@ import unittest
 from unittest.mock import patch, MagicMock
 import json
 import pytest
-from app import app, get_mongodb_collection
+from app import app
 
 
 @pytest.fixture
-def client():
+def test_client():
     """Create a test client for the Flask app"""
     app.config['TESTING'] = True
     with app.test_client() as client:

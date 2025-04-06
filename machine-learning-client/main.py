@@ -36,7 +36,7 @@ def connect_to_mongodb():
         logger.info("Successfully connected to MongoDB")
         return collection
     except Exception as e:
-        logger.error(f"Failed to connect to MongoDB: {e}")
+        logger.error("Failed to connect to MongoDB: %s", e)
         raise
 
 
@@ -58,7 +58,7 @@ def generate_sensor_data():
         "timestamp": datetime.datetime.now(),
     }
     
-    logger.info(f"Generated sensor data: {sensor_data}")
+    logger.info("Generated sensor data: %s", sensor_data)
     return sensor_data
 
 
@@ -95,7 +95,7 @@ def analyze_data(sensor_data):
     
     # Simple ML model for environment classification
     # Training data (simulated historical data)
-    X_train = np.array([
+    x_train = np.array([
         [15, 40], [18, 45], [20, 50], [22, 55], [25, 60],
         [28, 65], [30, 70], [33, 75], [35, 80], [38, 85]
     ])
@@ -105,7 +105,7 @@ def analyze_data(sensor_data):
     
     # Train a simple Random Forest model
     model = RandomForestClassifier(n_estimators=10, random_state=42)
-    model.fit(X_train, y_train)
+    model.fit(x_train, y_train)
     
     # Predict with our current data
     features = np.array([[temperature, humidity]])
@@ -126,7 +126,7 @@ def analyze_data(sensor_data):
         "analyzed_at": datetime.datetime.now(),
     }
     
-    logger.info(f"Analysis result: {analysis_result}")
+    logger.info("Analysis result: %s", analysis_result)
     return analysis_result
 
 
@@ -144,10 +144,10 @@ def save_to_mongodb(collection, sensor_data, analysis_result):
     
     try:
         result = collection.insert_one(document)
-        logger.info(f"Saved to MongoDB with ID: {result.inserted_id}")
+        logger.info("Saved to MongoDB with ID: %s", result.inserted_id)
         return result.inserted_id
     except Exception as e:
-        logger.error(f"Failed to save to MongoDB: {e}")
+        logger.error("Failed to save to MongoDB: %s", e)
         raise
 
 
@@ -172,8 +172,9 @@ def main_loop():
         except KeyboardInterrupt:
             logger.info("Stopping ML client")
             break
+        # Using a specific exception type would be better than broad Exception
         except Exception as e:
-            logger.error(f"Error in main loop: {e}")
+            logger.error("Error in main loop: %s", e)
             time.sleep(5)  # Wait a bit before retrying
 
 
