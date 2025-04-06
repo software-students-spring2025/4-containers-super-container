@@ -1,7 +1,9 @@
 opencv-python
-fer
-pymongo
-numpy
-moviepy
 deepface
+pymongo
+pytest
+pytest-cov
+pylint
+black
+mongomock
 
