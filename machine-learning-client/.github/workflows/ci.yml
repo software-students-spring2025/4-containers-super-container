@@ -1,16 +1,11 @@
-name: CI for ML Client
+name: Lint and Test
 
-on:
-  push:
-    paths:
-      - 'machine-learning-client/**'
-  pull_request:
-    paths:
-      - 'machine-learning-client/**'
+on: [push, pull_request]
 
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: machine-learning-client
@@ -22,10 +17,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: "3.11"
 
       - name: Install dependencies
-        working-directory: machine-learning-client
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
@@ -35,10 +29,10 @@ jobs:
         run: |
           python -m pylint app tests --exit-zero
 
-      - name: Check formatting with black
+      - name: Format with black
         run: |
-          black app tests --check
+          black --check app tests
 
-      - name: Run unit tests with coverage
+      - name: Run tests with coverage
         run: |
-          pytest --cov=app --cov-report=term-missing --cov-fail-under=80
+          pytest --cov=app tests

@@ -1,9 +1,11 @@
 opencv-python
 deepface
 pymongo
+numpy
+Flask
+mongomock
 pytest
 pytest-cov
-pylint
 black
-mongomock
+pylint
 
