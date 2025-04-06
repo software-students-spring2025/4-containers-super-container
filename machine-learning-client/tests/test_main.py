@@ -1,84 +1,71 @@
-# 标准库
 import os
-import sys
-import base64
-
-# 第三方库
 import pytest
-import mongomock
 import numpy as np
+import cv2
 from unittest.mock import patch, MagicMock
+import app.main as main# pylint: disable=import-error
 
-# 本地模块（加路径前要放在顶部）
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from app import main # pylint: disable=import-error
+def test_capture_image_mock(monkeypatch):
+    # 模拟摄像头返回
+    class DummyCapture:
+        def read(self): return True, 'fake_frame'
+        def release(self): pass
+    monkeypatch.setattr("cv2.VideoCapture", lambda _: DummyCapture())
+    frame = main.capture_image()
+    assert frame == 'fake_frame'
 
-@pytest.fixture
-def dummy_frame(): # pylint: disable=redefined-outer-name
-    # 创建一个模拟的图像帧（灰色图片）
-    return np.ones((100, 100, 3), dtype=np.uint8) * 127
+def test_analyze_emotion_mock():
+    # 模拟 DeepFace 返回情绪分析
+    with patch("app.main.DeepFace.analyze") as mock_analyze:
+        mock_analyze.return_value = [{
+            "dominant_emotion": "happy",
+            "emotion": {
+                "happy": np.float32(95.5),
+                "sad": np.float32(3.2)
+            }
+        }]
+        result = main.analyze_emotion("dummy_img")
+        assert result["dominant_emotion"] == "happy"
+        assert isinstance(result["emotion_scores"]["happy"], np.float32)
 
+def test_save_image_to_file_creates_image(tmp_path):
+    dummy_image = np.zeros((100, 100, 3), dtype=np.uint8)
+    # 改变保存路径
+    old_dir = main.IMAGE_DIR
+    main.IMAGE_DIR = tmp_path
+    path = main.save_image_to_file(dummy_image)
+    assert os.path.exists(path)
+    main.IMAGE_DIR = old_dir
 
-def test_encode_image(dummy_frame): # pylint: disable=redefined-outer-name
-    img_base64 = main.encode_image(dummy_frame)
-    assert isinstance(img_base64, str)
-    # 解码检查格式
-    decoded = base64.b64decode(img_base64)
-    assert decoded[:3] == b"\xff\xd8\xff"  # JPEG 文件头
+def test_save_analysis(monkeypatch, tmp_path):
+    dummy_image = np.zeros((100, 100, 3), dtype=np.uint8)
+    dummy_result = {
+        "dominant_emotion": "sad",
+        "emotion_scores": {
+            "happy": np.float32(88.8),
+            "sad": np.float32(11.2)
+        }
+    }
 
+    # 模拟 MongoDB 插入
+    class DummyCollection:
+        def insert_one(self, doc):
+            assert isinstance(doc["timestamp"], object)
+            assert doc["dominant_emotion"] == "sad"
+            assert isinstance(doc["emotion_scores"]["happy"], float)
 
-@patch("app.main.DeepFace.analyze")
-def test_analyze_emotion(mock_analyze, dummy_frame): # pylint: disable=redefined-outer-name
-    mock_analyze.return_value = [{"dominant_emotion": "happy"}]
-    result = main.analyze_emotion(dummy_frame)
-    assert result == "happy"
+    class DummyDB:
+        def __getitem__(self, name):
+            return DummyCollection()
 
+    class DummyClient:
+        def __getitem__(self, name):
+            return DummyDB()
 
-def test_create_record_structure(): # pylint: disable=redefined-outer-name
-    record = main.create_record("fake_base64", "sad")
-    assert "image" in record
-    assert "emotion" in record
-    assert "timestamp" in record
-    assert record["emotion"] == "sad"
-    assert isinstance(record["image"], str)
+    monkeypatch.setattr("app.main.MongoClient", lambda _: DummyClient())
 
-
-@patch("app.main.encode_image")
-@patch("app.main.analyze_emotion")
-def test_process_and_store_frame(mock_analyze, mock_encode, dummy_frame): # pylint: disable=redefined-outer-name
-    # 模拟返回
-    mock_analyze.return_value = "angry"
-    mock_encode.return_value = "imgdata=="
-
-    collection = mongomock.MongoClient().db.collection
-    result = main.process_and_store_frame(dummy_frame, collection)
-
-    assert result["emotion"] == "angry"
-    assert collection.count_documents({}) == 1
-
-@patch("app.main.MongoClient")
-def test_connect_mongo(mock_mongo): # pylint: disable=redefined-outer-name
-    mock_collection = MagicMock()
-    mock_mongo.return_value.__getitem__.return_value.__getitem__.return_value = mock_collection
-
-    result = main.connect_mongo()
-
-    # 验证最终返回的 collection 对象
-    assert result == mock_collection
-
-@patch("app.main.cv2.VideoCapture")
-@patch("app.main.process_and_store_frame")
-@patch("app.main.connect_mongo")
-def test_run_loop_once(mock_connect, mock_process, mock_capture, dummy_frame): # pylint: disable=redefined-outer-name
-    # 模拟摄像头读取一帧，然后结束
-    mock_cap_instance = MagicMock()
-    mock_cap_instance.read.side_effect = [(True, dummy_frame), (False, None)]
-    mock_capture.return_value = mock_cap_instance
-
-    mock_connect.return_value = mongomock.MongoClient().db.collection
-
-    main.run_loop()
-
-    mock_process.assert_called_once()
-    mock_capture.return_value.release.assert_called_once()
-    
+    # 设置临时图像目录
+    old_dir = main.IMAGE_DIR
+    main.IMAGE_DIR = tmp_path
+    main.save_analysis(dummy_image, dummy_result)
+    main.IMAGE_DIR = old_dir

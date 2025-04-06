@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Emotion Dashboard</title>
+  <title>Emotion History</title>
   <style>
-    img { width: 200px; }
-    .record { margin-bottom: 20px; }
+    body { font-family: sans-serif; }
+    .card { border: 1px solid #ccc; padding: 10px; margin: 10px; border-radius: 8px; }
   </style>
 </head>
 <body>
-  <h1>Recent Emotion Records</h1>
-  {% for rec in data %}
-    <div class="record">
-      <img src="{{ rec.image }}">
-      <p>Emotion: {{ rec.emotion }}</p>
-      <p>Time: {{ rec.timestamp }}</p>
+  <h1>Emotion Analysis Records</h1>
+  {% for r in records %}
+    <div class="card">
+      <p><strong>Time:</strong> {{ r['timestamp'] }}</p>
+      <p><strong>Dominant Emotion:</strong> {{ r['dominant_emotion'] }}</p>
+      <img src="/images/{{ r['image_path'].split('/')[-1] }}" width="300" />
     </div>
   {% endfor %}
 </body>

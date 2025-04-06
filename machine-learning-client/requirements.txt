@@ -8,4 +8,4 @@ deepface
 pymongo
 numpy
 Flask
-
+tf-keras

@@ -1,68 +1,68 @@
-"""
-main.py - 摄像头图像采集 + 情绪识别 + 存储到 MongoDB
-"""
-
-import base64
-import time
-from datetime import datetime
-
+import os
+import uuid
 import cv2
 from deepface import DeepFace
 from pymongo import MongoClient
+from datetime import datetime
 
+# 图片保存目录
+IMAGE_DIR = "images"
+os.makedirs(IMAGE_DIR, exist_ok=True)
 
-def connect_mongo():
-    client = MongoClient("mongodb://mongo:27017/")
-    db = client["emotion_db"]
-    return db["emotion_records"]
+def capture_image():
+    cap = cv2.VideoCapture(0)  # pylint: disable=no-member
+    ret, frame = cap.read()
+    cap.release()
+    if not ret:
+        raise RuntimeError("Unable to capture from camera")
+    return frame
 
-
-def analyze_emotion(frame):
-    result = DeepFace.analyze(
-        frame, actions=["emotion"], enforce_detection=False
-    )
-    return result[0]["dominant_emotion"]
-
-
-def encode_image(frame):
-    _, buffer = cv2.imencode(".jpg", frame)  # pylint: disable=no-member
-    return base64.b64encode(buffer).decode("utf-8")
-
-
-def create_record(img_base64, emotion):
+def analyze_emotion(image):
+    result = DeepFace.analyze(image, actions=['emotion'], enforce_detection=False)
     return {
-        "image": img_base64,
-        "emotion": emotion,
-        "timestamp": datetime.now(),
+        "dominant_emotion": result[0]["dominant_emotion"],
+        "emotion_scores": result[0]["emotion"]
     }
 
+def save_image_to_file(image):
+    # 生成唯一文件名
+    filename = f"{uuid.uuid4().hex}.jpg"
+    filepath = os.path.join(IMAGE_DIR, filename)
+    # 可选择压缩图像
+    max_dim = 300
+    height, width = image.shape[:2]
+    if max(height, width) > max_dim:
+        scale = max_dim / max(height, width)
+        image = cv2.resize(image, (int(width * scale), int(height * scale)))  # pylint: disable=no-member
+    # 保存图像到本地
+    cv2.imwrite(filepath, image)  # pylint: disable=no-member
+    return filepath
 
-def process_and_store_frame(frame, collection):
-    emotion = analyze_emotion(frame)
-    img_base64 = encode_image(frame)
-    record = create_record(img_base64, emotion)
-    collection.insert_one(record)
-    print(f"[{record['timestamp']}] Emotion: {emotion}")
-    return record
+def save_analysis(image, analysis_result):
+    filepath = save_image_to_file(image)
 
+    # ✅ 强制将所有数值转换为 Python float
+    emotion_scores_raw = analysis_result["emotion_scores"]
+    emotion_scores_clean = {k: float(v) for k, v in emotion_scores_raw.items()}
 
-def run_loop():
-    collection = connect_mongo()
-    cap = cv2.VideoCapture(0)  # pylint: disable=no-member
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client["emotion_db"]
+    collection = db["emotions"]
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
+    doc = {
+        "timestamp": datetime.utcnow(),
+        "image_path": filepath,
+        "dominant_emotion": analysis_result["dominant_emotion"],
+        "emotion_scores": emotion_scores_clean  # <== 这里使用转换过的字典
+    }
 
-        try:
-            process_and_store_frame(frame, collection)
-            time.sleep(5)
-        except Exception as err:  # pylint: disable=broad-exception-caught
-            print("Error:", err)
+    collection.insert_one(doc)
+    print(f"✅ Saved: {filepath} with emotion {analysis_result['dominant_emotion']}")
 
-    cap.release()
-
+def run():
+    image = capture_image()
+    result = analyze_emotion(image)
+    save_analysis(image, result)
 
 if __name__ == "__main__":
-    run_loop()
+    run()

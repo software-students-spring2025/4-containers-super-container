@@ -1,0 +1,11 @@
+[packages]
+opencv-python = "*"
+deepface = "*"
+pymongo = "*"
+tf-keras = "*"
+
+[dev-packages]
+black = "*"
+pylint = "*"
+coverage = "*"
+pytest = "*"
