@@ -73,4 +73,7 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        print(f"[❌ ERROR] run(): {type(e).__name__} - {e}")
