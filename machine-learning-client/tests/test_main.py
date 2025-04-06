@@ -3,6 +3,7 @@ import pytest
 import numpy as np
 import cv2
 from unittest.mock import patch, MagicMock
+
 import app.main as main  # pylint: disable=import-error
 
 
