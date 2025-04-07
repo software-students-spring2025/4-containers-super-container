@@ -43,57 +43,25 @@ def connect_to_mongodb():
 
 
 def generate_sensor_data():
-    """获取真实天气数据"""
-    # 直接使用原来有效的API密钥
-    API_KEY = "API_KEY"
-    city = "New York"  # 可以改为任何城市
-    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+    """
+    Generate simulated temperature, humidity, and light level sensor data.
 
-    try:
-        response = requests.get(url, timeout=10)  # 添加10秒超时
-        data = response.json()
+    Returns:
+        dict: A dictionary containing the sensor readings.
+    """
+    temperature = round(random.uniform(15.0, 40.0), 2)  # Temperature in Celsius
+    humidity = round(random.uniform(30.0, 90.0), 2)  # Humidity percentage
+    light_level = round(random.uniform(0.0, 1000.0), 2)  # Light level in lux
 
-        # 提取需要的数据
-        temperature = data["main"]["temp"]
-        humidity = data["main"]["humidity"]
-        # 直接使用云量百分比
-        cloud_percent = data.get("clouds", {}).get("all", 0)  # 云量百分比 0-100
-
-        # 使用纽约时区
-        ny_timezone = pytz.timezone("America/New_York")
-        now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
-
-        sensor_data = {
-            "temperature": temperature,
-            "humidity": humidity,
-            "cloud_cover": cloud_percent,  # 云量百分比
-            "timestamp": now,
-        }
-
-        logger.info("Retrieved weather data: %s", sensor_data)
-        return sensor_data
-    except Exception as e:
-        logger.error("Failed to get weather data: %s", e)
-        # 出错时回退到随机生成数据
-        return generate_random_data()
-
-
-def generate_random_data():
-    """生成随机数据作为备份"""
-    temperature = round(random.uniform(15.0, 40.0), 2)
-    humidity = round(random.uniform(30.0, 90.0), 2)
-    cloud_cover = round(random.uniform(0.0, 100.0), 0)  # 云量百分比 0-100
-
-    # 使用纽约时区
-    ny_timezone = pytz.timezone("America/New_York")
-    now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
-
-    return {
+    sensor_data = {
         "temperature": temperature,
         "humidity": humidity,
         "cloud_cover": cloud_cover,
         "timestamp": now,
     }
+
+    logger.info("Generated sensor data: %s", sensor_data)
+    return sensor_data
 
 
 def analyze_data(sensor_data):
@@ -161,10 +129,6 @@ def analyze_data(sensor_data):
 
     # Prediction confidence
     confidence = round(max(model.predict_proba(features)[0]) * 100, 2)
-
-    # 在函数的最后部分，创建分析结果前添加:
-    ny_timezone = pytz.timezone("America/New_York")
-    now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
 
     analysis_result = {
         "temperature_status": temp_status,

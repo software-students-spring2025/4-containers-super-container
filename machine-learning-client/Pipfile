@@ -1,6 +1,8 @@
 [[source]]
+name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
+<<<<<<< HEAD
 name = "pypi"
 
 [packages]
@@ -17,3 +19,22 @@ black = "==23.3.0"
 
 [requires]
 python_version = "3.9" 
+=======
+
+[requires]
+python_version = "3.11"
+
+[packages]
+numpy = "*"
+pytest = "*"
+tensorflow-cpu = "2.19.0"
+opencv-python = "4.7.0"
+deepface = "0.0.93"
+pymongo = "4.11.3"
+
+[dev-packages]
+pytest = "*"
+coverage = "*"
+black = "*"
+pylint = "*"
+>>>>>>> 8029add5941617346227d75de343b4015ce909ab
