@@ -14,6 +14,7 @@ from pymongo import MongoClient
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 import requests
+import pytz
 
 # Configure logging
 logging.basicConfig(
@@ -152,12 +153,16 @@ def analyze_data(sensor_data):
     # Prediction confidence
     confidence = round(max(model.predict_proba(features)[0]) * 100, 2)
 
+    # 在函数的最后部分，创建分析结果前添加:
+    ny_timezone = pytz.timezone('America/New_York')
+    now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
+    
     analysis_result = {
         "temperature_status": temp_status,
         "humidity_status": humidity_status,
         "ml_environment_prediction": ml_prediction,
         "confidence": confidence,
-        "analyzed_at": datetime.datetime.now(),
+        "analyzed_at": now,  # 使用纽约时区
     }
 
     logger.info("Analysis result: %s", analysis_result)

@@ -20,7 +20,7 @@ services:
       - mongodb
     environment:
       - MONGO_URI=mongodb://mongodb:27017
-      - WEATHER_API_KEY=API_KEY
+      - WEATHER_API_KEY="API_KEY"
     networks:
       - app-network
     restart: unless-stopped
