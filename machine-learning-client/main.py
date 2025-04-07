@@ -43,7 +43,7 @@ def connect_to_mongodb():
 
 def generate_sensor_data():
     """获取真实天气数据"""
-    API_KEY = "3337779b69c1788b1bad1f56f0abfa85"  # 注册后获取
+    API_KEY = "API_KEY"  # 注册后获取
     city = "New York"  # 可以改为任何城市
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
     
