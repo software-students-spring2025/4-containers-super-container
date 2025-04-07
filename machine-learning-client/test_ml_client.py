@@ -24,13 +24,11 @@ class TestMlClient(unittest.TestCase):
         # Check that all expected keys exist
         self.assertIn("temperature", sensor_data)
         self.assertIn("humidity", sensor_data)
-        self.assertIn("light_level", sensor_data)
         self.assertIn("timestamp", sensor_data)
 
         # Check that values are within expected ranges
         self.assertTrue(15.0 <= sensor_data["temperature"] <= 40.0)
         self.assertTrue(30.0 <= sensor_data["humidity"] <= 90.0)
-        self.assertTrue(0.0 <= sensor_data["light_level"] <= 1000.0)
         self.assertIsInstance(sensor_data["timestamp"], datetime.datetime)
 
     def test_analyze_data_hot(self):
@@ -39,7 +37,6 @@ class TestMlClient(unittest.TestCase):
         sensor_data = {
             "temperature": 35.0,
             "humidity": 60.0,
-            "light_level": 500.0,
             "timestamp": datetime.datetime.now(),
         }
 
@@ -60,7 +57,6 @@ class TestMlClient(unittest.TestCase):
         sensor_data = {
             "temperature": 16.0,
             "humidity": 45.0,
-            "light_level": 500.0,
             "timestamp": datetime.datetime.now(),
         }
 
@@ -80,7 +76,6 @@ class TestMlClient(unittest.TestCase):
         sensor_data = {
             "temperature": 25.0,
             "humidity": 50.0,
-            "light_level": 500.0,
             "timestamp": datetime.datetime.now(),
         }
 
@@ -121,14 +116,15 @@ class TestMlClient(unittest.TestCase):
         # Test data
         sensor_data = {"temperature": 25.0, "humidity": 50.0}
         analysis_result = {"temperature_status": "Normal"}
+        data = {**sensor_data, **analysis_result}  #
 
         # Call function
-        result = save_to_mongodb(mock_collection, sensor_data, analysis_result)
+        result = save_to_mongodb(mock_collection, data)
 
         # Verify
         self.assertEqual(result, "test_id")
         mock_collection.insert_one.assert_called_once()
-        # Check that insert_one was called with the combined data
+        # Check that insert_one was called with the correct merged data
         args, _ = mock_collection.insert_one.call_args
         self.assertEqual(args[0]["temperature"], 25.0)
         self.assertEqual(args[0]["humidity"], 50.0)
