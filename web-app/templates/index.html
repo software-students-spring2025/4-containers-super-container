@@ -49,7 +49,7 @@
                                             <th>Time</th>
                                             <th>Temperature (°C)</th>
                                             <th>Humidity (%)</th>
-                                            <th>Light Level (lux)</th>
+                                            <th>Cloud Cover (%)</th>
                                             <th>Analysis</th>
                                             <th>Confidence</th>
                                         </tr>
@@ -68,7 +68,7 @@
                                                         ({{ reading.humidity_status }})
                                                     </span>
                                                 </td>
-                                                <td>{{ reading.light_level }}</td>
+                                                <td>{{ reading.cloud_cover }}%</td>
                                                 <td class="{{ reading.ml_environment_prediction|lower }}">
                                                     {{ reading.ml_environment_prediction }}
                                                 </td>

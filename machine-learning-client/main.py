@@ -56,8 +56,8 @@ def generate_sensor_data():
         # 提取需要的数据
         temperature = data["main"]["temp"]
         humidity = data["main"]["humidity"]
-        # light_level可以用云量或能见度代替
-        light_level = data["visibility"] / 100  # 转换为0-1000范围
+        # 直接使用云量百分比
+        cloud_percent = data.get("clouds", {}).get("all", 0)  # 云量百分比 0-100
 
         # 使用纽约时区
         ny_timezone = pytz.timezone("America/New_York")
@@ -66,7 +66,7 @@ def generate_sensor_data():
         sensor_data = {
             "temperature": temperature,
             "humidity": humidity,
-            "light_level": light_level,
+            "cloud_cover": cloud_percent,  # 云量百分比
             "timestamp": now,
         }
 
@@ -82,13 +82,17 @@ def generate_random_data():
     """生成随机数据作为备份"""
     temperature = round(random.uniform(15.0, 40.0), 2)
     humidity = round(random.uniform(30.0, 90.0), 2)
-    light_level = round(random.uniform(0.0, 1000.0), 2)
+    cloud_cover = round(random.uniform(0.0, 100.0), 0)  # 云量百分比 0-100
+
+    # 使用纽约时区
+    ny_timezone = pytz.timezone("America/New_York")
+    now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
 
     return {
         "temperature": temperature,
         "humidity": humidity,
-        "light_level": light_level,
-        "timestamp": datetime.datetime.now(),
+        "cloud_cover": cloud_cover,
+        "timestamp": now,
     }
 
 
