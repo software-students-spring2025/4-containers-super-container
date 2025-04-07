@@ -30,16 +30,18 @@ def index():
     try:
         collection = get_mongodb_collection()
         # Get the latest 10 readings, sorted by timestamp
-        latest_readings = list(
-            collection.find().sort("timestamp", -1).limit(10)
-        )
+        latest_readings = list(collection.find().sort("timestamp", -1).limit(10))
 
         # Format timestamps for display
         for reading in latest_readings:
             if "timestamp" in reading:
-                reading["timestamp"] = reading["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
+                reading["timestamp"] = reading["timestamp"].strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
             if "analyzed_at" in reading:
-                reading["analyzed_at"] = reading["analyzed_at"].strftime("%Y-%m-%d %H:%M:%S")
+                reading["analyzed_at"] = reading["analyzed_at"].strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
 
         return render_template("index.html", readings=latest_readings)
     except Exception as e:
@@ -53,16 +55,18 @@ def get_readings():
     try:
         collection = get_mongodb_collection()
         # Get the latest 50 readings, sorted by timestamp
-        readings = list(
-            collection.find({}, {"_id": 0}).sort("timestamp", -1).limit(50)
-        )
+        readings = list(collection.find({}, {"_id": 0}).sort("timestamp", -1).limit(50))
 
         # Convert datetime objects to strings for JSON serialization
         for reading in readings:
             if "timestamp" in reading:
-                reading["timestamp"] = reading["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
+                reading["timestamp"] = reading["timestamp"].strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
             if "analyzed_at" in reading:
-                reading["analyzed_at"] = reading["analyzed_at"].strftime("%Y-%m-%d %H:%M:%S")
+                reading["analyzed_at"] = reading["analyzed_at"].strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
 
         return jsonify({"success": True, "readings": readings})
     except Exception as e:
@@ -92,12 +96,14 @@ def get_stats():
 
         stats = {
             "total_readings": total_count,
-            "latest_reading_time": latest_time.strftime("%Y-%m-%d %H:%M:%S") if latest_time else None,
+            "latest_reading_time": latest_time.strftime("%Y-%m-%d %H:%M:%S")
+            if latest_time
+            else None,
             "environment_counts": {
                 "hot": hot_count,
                 "cold": cold_count,
-                "comfortable": comfortable_count
-            }
+                "comfortable": comfortable_count,
+            },
         }
 
         return jsonify({"success": True, "stats": stats})
