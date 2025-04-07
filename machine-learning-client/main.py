@@ -97,22 +97,9 @@ def generate_random_data():
 
 
 def analyze_data(sensor_data):
-    """
-    Perform simple ML analysis on sensor data.
-    For demonstration, we use a simple Random Forest classifier to classify
-    the environment condition based on temperature and humidity.
-
-    Args:
-        sensor_data (dict): The sensor data to analyze
-
-    Returns:
-        dict: Analysis results
-    """
-    # Extract features
     temperature = sensor_data["temperature"]
     humidity = sensor_data["humidity"]
 
-    # Simple rules-based analysis (backup)
     if temperature > 30:
         temp_status = "Hot"
     elif temperature < 20:
@@ -127,8 +114,6 @@ def analyze_data(sensor_data):
     else:
         humidity_status = "Normal"
 
-    # Simple ML model for environment classification
-    # Training data (simulated historical data)
     x_train = np.array(
         [
             [15, 40],
@@ -143,39 +128,28 @@ def analyze_data(sensor_data):
             [38, 85],
         ]
     )
-
-    # Labels: 0=Cold, 1=Comfortable, 2=Hot
     y_train = np.array([0, 0, 1, 1, 1, 1, 2, 2, 2, 2])
 
-    # Train a simple Random Forest model
     model = RandomForestClassifier(n_estimators=10, random_state=42)
     model.fit(x_train, y_train)
 
-    # Predict with our current data
     features = np.array([[temperature, humidity]])
     prediction = model.predict(features)[0]
 
-    # Map prediction to human-readable label
-    environment_labels = {0: "Cold", 1: "Comfortable", 2: "Hot"}
-    ml_prediction = environment_labels[prediction]
+    ml_prediction = {0: "Cold", 1: "Comfortable", 2: "Hot"}[prediction]
 
-    # Prediction confidence
     confidence = round(max(model.predict_proba(features)[0]) * 100, 2)
 
-    # 在函数的最后部分，创建分析结果前添加:
     ny_timezone = pytz.timezone("America/New_York")
     now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
 
-    analysis_result = {
+    return {
         "temperature_status": temp_status,
         "humidity_status": humidity_status,
         "ml_environment_prediction": ml_prediction,
         "confidence": confidence,
-        "analyzed_at": now,  # 使用纽约时区
+        "analyzed_at": now,
     }
-
-    logger.info("Analysis result: %s", analysis_result)
-    return analysis_result
 
 
 def save_to_mongodb(collection, data):
