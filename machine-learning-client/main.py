@@ -178,7 +178,6 @@ def analyze_data(sensor_data):
     return analysis_result
 
 
-
 def save_to_mongodb(collection, data):
     """
     Save merged sensor + analysis data to MongoDB.
