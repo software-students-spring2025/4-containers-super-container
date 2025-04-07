@@ -1,0 +1,39 @@
+
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:5
+    container_name: emotion-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  client:
+    build:
+      context: ./machine-learning-client
+    container_name: emotion-client
+    depends_on:
+      - mongo
+    volumes:
+      - ./machine-learning-client/images:/app/images  # 映射图像文件
+    devices:
+      - "/dev/video0:/dev/video0"  # 仅适用于 Linux 摄像头
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web-app
+    container_name: emotion-web
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    volumes:
+      - ./machine-learning-client/images:/machine-learning-client/images
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+

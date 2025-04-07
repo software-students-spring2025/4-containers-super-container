@@ -1,0 +1,12 @@
+
+pylint
+black
+pytest
+pytest-cov
+mongomock
+opencv-python
+deepface
+pymongo
+numpy
+Flask
+tf-keras
