@@ -1,39 +1,44 @@
-
-version: '3.8'
+version: '3'
 
 services:
-  mongo:
-    image: mongo:5
-    container_name: emotion-mongo
+  # MongoDB database container
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - ./mongo-data:/data/db
+    networks:
+      - app-network
 
-  client:
-    build:
-      context: ./machine-learning-client
-    container_name: emotion-client
+  # Machine Learning client container
+  ml-client:
+    build: ./machine-learning-client
+    container_name: ml-client
     depends_on:
-      - mongo
-    volumes:
-      - ./machine-learning-client/images:/app/images  # 映射图像文件
-    devices:
-      - "/dev/video0:/dev/video0"  # 仅适用于 Linux 摄像头
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - WEATHER_API_KEY="API_KEY"
+    networks:
+      - app-network
     restart: unless-stopped
 
-  web:
-    build:
-      context: ./web-app
-    container_name: emotion-web
+  # Web App container
+  web-app:
+    build: ./web-app
+    container_name: web-app
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
     ports:
-      - "5000:5000"
-    depends_on:
-      - mongo
-    volumes:
-      - ./machine-learning-client/images:/machine-learning-client/images
+      - "8080:5000"
+    networks:
+      - app-network
     restart: unless-stopped
 
-volumes:
-  mongo-data:
-
+networks:
+  app-network:
+    driver: bridge 

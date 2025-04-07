@@ -1,0 +1,24 @@
+[MASTER]
+# Python version
+py-version = 3.9
+
+# Disable specific warnings and errors
+disable=
+    C0103, # Invalid name - for db and e variables
+    W0718, # Broad exception caught
+    E0401, # Import error - for modules installed in container but not in CI
+    R0914, # Too many local variables
+
+[FORMAT]
+# Maximum line length
+max-line-length = 100
+
+[MESSAGES CONTROL]
+# Regular expression for functions to disable no-member for
+ignored-modules = 
+    pymongo,
+    sklearn,
+    numpy,
+    pytest,
+    requests,
+    pytz 
