@@ -26,13 +26,8 @@ jobs:
       working-directory: ./machine-learning-client
       run: |
         python -m pip install --upgrade pip
-        # Check if Pipfile exists and use pipenv if it does, otherwise use requirements.txt
-        if [ -f "Pipfile" ]; then
-          pip install pipenv
-          pipenv install --dev --system
-        else
-          pip install -r requirements.txt
-        fi
+        # Simply use requirements.txt, ignore Pipfile to avoid potential issues
+        pip install -r requirements.txt
         # Ensure all dependencies are installed for linting
         pip install pylint black pytest pytest-cov
         
