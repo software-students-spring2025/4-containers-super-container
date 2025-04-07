@@ -6,6 +6,8 @@ py-version = 3.9
 disable=
     C0103, # Invalid name - for db and e variables
     W0718, # Broad exception caught
+    E0401, # Import error - for modules installed in container but not in CI
+    R0914, # Too many local variables
 
 [FORMAT]
 # Maximum line length
@@ -17,4 +19,6 @@ ignored-modules =
     pymongo,
     sklearn,
     numpy,
-    pytest 
+    pytest,
+    requests,
+    pytz 

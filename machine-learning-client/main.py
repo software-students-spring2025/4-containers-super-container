@@ -44,27 +44,32 @@ def connect_to_mongodb():
 
 def generate_sensor_data():
     """获取真实天气数据"""
-    API_KEY = "API_KEY"  # 注册后获取
+    # 直接使用原来有效的API密钥
+    API_KEY = "API_KEY"
     city = "New York"  # 可以改为任何城市
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
-    
+
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)  # 添加10秒超时
         data = response.json()
-        
+
         # 提取需要的数据
         temperature = data["main"]["temp"]
         humidity = data["main"]["humidity"]
         # light_level可以用云量或能见度代替
         light_level = data["visibility"] / 100  # 转换为0-1000范围
-        
+
+        # 使用纽约时区
+        ny_timezone = pytz.timezone("America/New_York")
+        now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
+
         sensor_data = {
             "temperature": temperature,
-            "humidity": humidity, 
+            "humidity": humidity,
             "light_level": light_level,
-            "timestamp": datetime.datetime.now(datetime.timezone.utc).astimezone(),  # 转换为本地时区
+            "timestamp": now,
         }
-        
+
         logger.info("Retrieved weather data: %s", sensor_data)
         return sensor_data
     except Exception as e:
@@ -78,7 +83,7 @@ def generate_random_data():
     temperature = round(random.uniform(15.0, 40.0), 2)
     humidity = round(random.uniform(30.0, 90.0), 2)
     light_level = round(random.uniform(0.0, 1000.0), 2)
-    
+
     return {
         "temperature": temperature,
         "humidity": humidity,
@@ -154,9 +159,9 @@ def analyze_data(sensor_data):
     confidence = round(max(model.predict_proba(features)[0]) * 100, 2)
 
     # 在函数的最后部分，创建分析结果前添加:
-    ny_timezone = pytz.timezone('America/New_York')
+    ny_timezone = pytz.timezone("America/New_York")
     now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
-    
+
     analysis_result = {
         "temperature_status": temp_status,
         "humidity_status": humidity_status,
