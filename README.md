@@ -1,6 +1,3 @@
-[![ML Client CI](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/ml-client.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/ml-client.yml)
-[![Web App CI](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/web-app.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/web-app.yml)
-
 ## Overview
 
 **EmotionSense** is a modular, containerized system that combines real-time data capture, machine learning-based emotion analysis, and interactive data visualization. Designed for portability and scalability, the system leverages Docker to manage three interoperable services:
