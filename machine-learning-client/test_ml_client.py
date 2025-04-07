@@ -101,7 +101,6 @@ class TestMlClient(unittest.TestCase):
 
         self.assertEqual(result, mock_collection)
 
-    @patch("main.MongoClient")
     def test_save_to_mongodb(self):
         """Test saving data to MongoDB"""
         # Setup mocks
