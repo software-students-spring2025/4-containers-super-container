@@ -162,4 +162,3 @@ class TestApp(unittest.TestCase):
 
         # Verify the mock was called
         mock_get_collection.assert_called_once()
-        

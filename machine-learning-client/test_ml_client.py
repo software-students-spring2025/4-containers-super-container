@@ -133,4 +133,3 @@ class TestMlClient(unittest.TestCase):
         self.assertEqual(args[0]["temperature"], 25.0)
         self.assertEqual(args[0]["humidity"], 50.0)
         self.assertEqual(args[0]["temperature_status"], "Normal")
-        

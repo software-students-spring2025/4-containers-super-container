@@ -96,9 +96,9 @@ def get_stats():
 
         stats = {
             "total_readings": total_count,
-            "latest_reading_time": latest_time.strftime("%Y-%m-%d %H:%M:%S %Z")
-            if latest_time
-            else None,
+            "latest_reading_time": (
+                latest_time.strftime("%Y-%m-%d %H:%M:%S %Z") if latest_time else None
+            ),
             "environment_counts": {
                 "hot": hot_count,
                 "cold": cold_count,
@@ -114,4 +114,3 @@ def get_stats():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=False, port=5000)
-    
