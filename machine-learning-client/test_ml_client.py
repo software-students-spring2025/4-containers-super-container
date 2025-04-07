@@ -89,8 +89,9 @@ class TestMlClient(unittest.TestCase):
         )
         self.assertTrue(0 <= result["confidence"] <= 100)
 
-    @patch("pymongo.MongoClient")  # 注意 patch 的路径要根据 main.py 的实际导入路径
+    @patch("main.MongoClient")  # 注意 patch 的路径要根据 main.py 的实际导入路径
     def test_connect_to_mongodb(self, mock_client):
+        """Test connect to mongodb"""
         mock_db = MagicMock()
         mock_collection = MagicMock()
         mock_client.return_value.__getitem__.return_value = mock_db
@@ -100,18 +101,17 @@ class TestMlClient(unittest.TestCase):
 
         self.assertEqual(result, mock_collection)
 
-    @patch("pymongo.collection.Collection.insert_one")
-    def test_save_to_mongodb(self, mock_insert):
+    @patch("main.MongoClient")
+    def test_save_to_mongodb(self):
         """Test saving data to MongoDB"""
         # Setup mocks
         mock_collection = MagicMock()
-        mock_insert.return_value.inserted_id = "test_id"
         mock_collection.insert_one.return_value.inserted_id = "test_id"
 
         # Test data
         sensor_data = {"temperature": 25.0, "humidity": 50.0}
         analysis_result = {"temperature_status": "Normal"}
-        data = {**sensor_data, **analysis_result}  #
+        data = {**sensor_data, **analysis_result}
 
         # Call function
         result = save_to_mongodb(mock_collection, data)
@@ -119,7 +119,8 @@ class TestMlClient(unittest.TestCase):
         # Verify
         self.assertEqual(result, "test_id")
         mock_collection.insert_one.assert_called_once()
-        # Check that insert_one was called with the correct merged data
+
+        # Check inserted data
         args, _ = mock_collection.insert_one.call_args
         self.assertEqual(args[0]["temperature"], 25.0)
         self.assertEqual(args[0]["humidity"], 50.0)
