@@ -20,13 +20,13 @@ class TestMlClient(unittest.TestCase):
     def test_generate_sensor_data(self):
         """Test the sensor data generation function"""
         sensor_data = generate_sensor_data()
-        
+
         # Check that all expected keys exist
         self.assertIn("temperature", sensor_data)
         self.assertIn("humidity", sensor_data)
         self.assertIn("light_level", sensor_data)
         self.assertIn("timestamp", sensor_data)
-        
+
         # Check that values are within expected ranges
         self.assertTrue(15.0 <= sensor_data["temperature"] <= 40.0)
         self.assertTrue(30.0 <= sensor_data["humidity"] <= 90.0)
@@ -42,13 +42,15 @@ class TestMlClient(unittest.TestCase):
             "light_level": 500.0,
             "timestamp": datetime.datetime.now(),
         }
-        
+
         result = analyze_data(sensor_data)
-        
+
         # Check results
         self.assertEqual(result["temperature_status"], "Hot")
         self.assertEqual(result["humidity_status"], "Normal")
-        self.assertIn(result["ml_environment_prediction"], ["Cold", "Comfortable", "Hot"])
+        self.assertIn(
+            result["ml_environment_prediction"], ["Cold", "Comfortable", "Hot"]
+        )
         self.assertTrue(0 <= result["confidence"] <= 100)
         self.assertIsInstance(result["analyzed_at"], datetime.datetime)
 
@@ -61,13 +63,15 @@ class TestMlClient(unittest.TestCase):
             "light_level": 500.0,
             "timestamp": datetime.datetime.now(),
         }
-        
+
         result = analyze_data(sensor_data)
-        
+
         # Check results
         self.assertEqual(result["temperature_status"], "Cold")
         self.assertEqual(result["humidity_status"], "Normal")
-        self.assertIn(result["ml_environment_prediction"], ["Cold", "Comfortable", "Hot"])
+        self.assertIn(
+            result["ml_environment_prediction"], ["Cold", "Comfortable", "Hot"]
+        )
         self.assertTrue(0 <= result["confidence"] <= 100)
 
     def test_analyze_data_normal(self):
@@ -79,13 +83,15 @@ class TestMlClient(unittest.TestCase):
             "light_level": 500.0,
             "timestamp": datetime.datetime.now(),
         }
-        
+
         result = analyze_data(sensor_data)
-        
+
         # Check results
         self.assertEqual(result["temperature_status"], "Normal")
         self.assertEqual(result["humidity_status"], "Normal")
-        self.assertIn(result["ml_environment_prediction"], ["Cold", "Comfortable", "Hot"])
+        self.assertIn(
+            result["ml_environment_prediction"], ["Cold", "Comfortable", "Hot"]
+        )
         self.assertTrue(0 <= result["confidence"] <= 100)
 
     @patch("pymongo.MongoClient")
@@ -96,10 +102,10 @@ class TestMlClient(unittest.TestCase):
         mock_collection = MagicMock()
         mock_client.return_value.__getitem__.return_value = mock_db
         mock_db.__getitem__.return_value = mock_collection
-        
+
         # Call the function
         result = connect_to_mongodb()
-        
+
         # Verify results
         self.assertEqual(result, mock_collection)
         mock_client.assert_called_once()
@@ -111,14 +117,14 @@ class TestMlClient(unittest.TestCase):
         mock_collection = MagicMock()
         mock_insert.return_value.inserted_id = "test_id"
         mock_collection.insert_one.return_value.inserted_id = "test_id"
-        
+
         # Test data
         sensor_data = {"temperature": 25.0, "humidity": 50.0}
         analysis_result = {"temperature_status": "Normal"}
-        
+
         # Call function
         result = save_to_mongodb(mock_collection, sensor_data, analysis_result)
-        
+
         # Verify
         self.assertEqual(result, "test_id")
         mock_collection.insert_one.assert_called_once()
@@ -126,4 +132,4 @@ class TestMlClient(unittest.TestCase):
         args, _ = mock_collection.insert_one.call_args
         self.assertEqual(args[0]["temperature"], 25.0)
         self.assertEqual(args[0]["humidity"], 50.0)
-        self.assertEqual(args[0]["temperature_status"], "Normal") 
+        self.assertEqual(args[0]["temperature_status"], "Normal")

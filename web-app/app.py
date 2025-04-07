@@ -33,16 +33,17 @@ def index():
         latest_readings = list(
             collection.find().sort("timestamp", -1).limit(10)
         )
-        
+
         # Format timestamps for display
         for reading in latest_readings:
             if "timestamp" in reading:
                 reading["timestamp"] = reading["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
             if "analyzed_at" in reading:
                 reading["analyzed_at"] = reading["analyzed_at"].strftime("%Y-%m-%d %H:%M:%S")
-        
+
         return render_template("index.html", readings=latest_readings)
     except Exception as e:
+        # Broad exception is acceptable for web views to prevent crashes
         return render_template("error.html", error=str(e))
 
 
@@ -55,16 +56,17 @@ def get_readings():
         readings = list(
             collection.find({}, {"_id": 0}).sort("timestamp", -1).limit(50)
         )
-        
+
         # Convert datetime objects to strings for JSON serialization
         for reading in readings:
             if "timestamp" in reading:
                 reading["timestamp"] = reading["timestamp"].strftime("%Y-%m-%d %H:%M:%S")
             if "analyzed_at" in reading:
                 reading["analyzed_at"] = reading["analyzed_at"].strftime("%Y-%m-%d %H:%M:%S")
-        
+
         return jsonify({"success": True, "readings": readings})
     except Exception as e:
+        # Broad exception is acceptable for API to return meaningful errors
         return jsonify({"success": False, "error": str(e)})
 
 
@@ -73,21 +75,21 @@ def get_stats():
     """API endpoint to get statistics about the readings"""
     try:
         collection = get_mongodb_collection()
-        
+
         # Get the total count of readings
         total_count = collection.count_documents({})
-        
+
         # Get the latest reading time
         latest_reading = collection.find_one({}, sort=[("timestamp", -1)])
         latest_time = latest_reading.get("timestamp") if latest_reading else None
-        
+
         # Get counts of different environment predictions
         hot_count = collection.count_documents({"ml_environment_prediction": "Hot"})
         cold_count = collection.count_documents({"ml_environment_prediction": "Cold"})
         comfortable_count = collection.count_documents(
             {"ml_environment_prediction": "Comfortable"}
         )
-        
+
         stats = {
             "total_readings": total_count,
             "latest_reading_time": latest_time.strftime("%Y-%m-%d %H:%M:%S") if latest_time else None,
@@ -97,11 +99,12 @@ def get_stats():
                 "comfortable": comfortable_count
             }
         }
-        
+
         return jsonify({"success": True, "stats": stats})
     except Exception as e:
+        # Broad exception is acceptable for API to return meaningful errors
         return jsonify({"success": False, "error": str(e)})
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=False, port=5000) 
+    app.run(host="0.0.0.0", debug=False, port=5000)

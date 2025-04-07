@@ -1,0 +1,33 @@
+[MASTER]
+# Python version
+py-version = 3.8
+
+# Disable specific warnings and errors
+disable=
+    C0103, # Invalid name
+    C0111, # Missing docstring
+    W0611, # Unused import
+    E0401, # Import error
+    W0718, # Broad exception caught
+
+[FORMAT]
+# Maximum line length
+max-line-length = 100
+
+# Expected format of line ending
+expected-line-ending-format = LF
+
+[MESSAGES CONTROL]
+# Regular expression for functions to disable no-member for
+ignored-modules = 
+    pymongo,
+    flask,
+    pytest
+
+[DESIGN]
+# Maximum number of arguments in a function
+max-args = 6
+# Maximum number of attributes in a class
+max-attributes = 12
+# Maximum number of public methods in a class
+max-public-methods = 20 

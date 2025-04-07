@@ -20,12 +20,12 @@ def test_client():
 
 class TestApp(unittest.TestCase):
     """Tests for the Flask Web App"""
-    
+
     def setUp(self):
         """Set up the test client"""
         app.config['TESTING'] = True
         self.client = app.test_client()
-    
+
     @patch('app.get_mongodb_collection')
     def test_index_route(self, mock_get_collection):
         """Test the index route"""
@@ -44,21 +44,21 @@ class TestApp(unittest.TestCase):
                 "analyzed_at": MagicMock()
             }
         ]
-        
+
         # Set up the mock to return our test data
         mock_collection.find.return_value.sort.return_value.limit.return_value = mock_readings
         mock_get_collection.return_value = mock_collection
-        
+
         # Mock the timestamp strftime method
         mock_readings[0]["timestamp"].strftime.return_value = "2023-01-01 12:00:00"
         mock_readings[0]["analyzed_at"].strftime.return_value = "2023-01-01 12:00:01"
-        
+
         # Make the request
         response = self.client.get('/')
-        
+
         # Check the response
         self.assertEqual(response.status_code, 200)
-        
+
         # Verify the mocks were called correctly
         mock_get_collection.assert_called_once()
         mock_collection.find.assert_called_once()
@@ -83,24 +83,24 @@ class TestApp(unittest.TestCase):
                 "analyzed_at": MagicMock()
             }
         ]
-        
+
         # Set up the mock to return our test data
         mock_collection.find.return_value.sort.return_value.limit.return_value = mock_readings
         mock_get_collection.return_value = mock_collection
-        
+
         # Mock the timestamp strftime method
         mock_readings[0]["timestamp"].strftime.return_value = "2023-01-01 12:00:00"
         mock_readings[0]["analyzed_at"].strftime.return_value = "2023-01-01 12:00:01"
-        
+
         # Make the request
         response = self.client.get('/api/readings')
-        
+
         # Check the response
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertTrue(data["success"])
         self.assertIn("readings", data)
-        
+
         # Verify the mocks were called correctly
         mock_get_collection.assert_called_once()
 
@@ -115,17 +115,17 @@ class TestApp(unittest.TestCase):
             2,   # cold readings
             5    # comfortable readings
         ]
-        
+
         # Set up the mock for latest reading
         mock_latest = {"timestamp": MagicMock()}
         mock_latest["timestamp"].strftime.return_value = "2023-01-01 12:00:00"
         mock_collection.find_one.return_value = mock_latest
-        
+
         mock_get_collection.return_value = mock_collection
-        
+
         # Make the request
         response = self.client.get('/api/stats')
-        
+
         # Check the response
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
@@ -135,7 +135,7 @@ class TestApp(unittest.TestCase):
         self.assertEqual(data["stats"]["environment_counts"]["hot"], 3)
         self.assertEqual(data["stats"]["environment_counts"]["cold"], 2)
         self.assertEqual(data["stats"]["environment_counts"]["comfortable"], 5)
-        
+
         # Verify the mocks were called correctly
         mock_get_collection.assert_called_once()
 
@@ -144,15 +144,15 @@ class TestApp(unittest.TestCase):
         """Test the index route when database error occurs"""
         # Make the mock raise an exception
         mock_get_collection.side_effect = Exception("Database error")
-        
+
         # Make the request
         response = self.client.get('/')
-        
+
         # Check the response - should still return 200 but with error template
         self.assertEqual(response.status_code, 200)
-        
+
         # Check that response contains error message
         self.assertIn(b"Database error", response.data)
-        
+
         # Verify the mock was called
-        mock_get_collection.assert_called_once() 
+        mock_get_collection.assert_called_once()
