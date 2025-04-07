@@ -198,10 +198,10 @@ def save_to_mongodb(collection, sensor_data, analysis_result):
         logger.error("Failed to save to MongoDB: %s", e)
         raise
 
-
+collection = connect_to_mongodb()
 def main_loop():
     """Main execution loop for the ML client."""
-    collection = connect_to_mongodb()
+
 
     while True:
         try:
