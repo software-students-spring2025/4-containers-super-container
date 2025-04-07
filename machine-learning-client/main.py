@@ -97,6 +97,7 @@ def generate_random_data():
 
 
 def analyze_data(sensor_data):
+    """Analyze the data."""
     temperature = sensor_data["temperature"]
     humidity = sensor_data["humidity"]
 
