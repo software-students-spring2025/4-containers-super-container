@@ -96,9 +96,11 @@ def get_stats():
 
         stats = {
             "total_readings": total_count,
+
             "latest_reading_time": latest_time.strftime("%Y-%m-%d %H:%M:%S")
             if latest_time
             else None,
+
             "environment_counts": {
                 "hot": hot_count,
                 "cold": cold_count,
