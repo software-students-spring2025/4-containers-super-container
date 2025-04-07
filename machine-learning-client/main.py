@@ -178,41 +178,35 @@ def analyze_data(sensor_data):
     return analysis_result
 
 
-def save_to_mongodb(collection, sensor_data, analysis_result):
-    """
-    Save sensor data and analysis results to MongoDB.
 
+def save_to_mongodb(collection, data):
+    """
+    Save merged sensor + analysis data to MongoDB.
     Args:
         collection: MongoDB collection object
-        sensor_data (dict): The sensor data
-        analysis_result (dict): The analysis results
+        data (dict): The full data document
     """
-    # Combine sensor data and analysis results
-    document = {**sensor_data, **analysis_result}
-
     try:
-        result = collection.insert_one(document)
+        result = collection.insert_one(data)
         logger.info("Saved to MongoDB with ID: %s", result.inserted_id)
         return result.inserted_id
     except Exception as e:
         logger.error("Failed to save to MongoDB: %s", e)
         raise
 
-collection = connect_to_mongodb()
+
 def main_loop():
     """Main execution loop for the ML client."""
-
+    collection = connect_to_mongodb()
 
     while True:
         try:
-            # Generate simulated sensor data
-            sensor_data = generate_sensor_data()
-
-            # Analyze the data
-            analysis_result = analyze_data(sensor_data)
+            # Generate and analyze sensor data
+            data = generate_sensor_data()
+            data.update(analyze_data(data))
 
             # Save to MongoDB
-            save_to_mongodb(collection, sensor_data, analysis_result)
+            save_to_mongodb(collection, data)
 
             # Wait before next iteration
             time.sleep(10)  # Collect data every 10 seconds
@@ -220,10 +214,9 @@ def main_loop():
         except KeyboardInterrupt:
             logger.info("Stopping ML client")
             break
-        # Using a specific exception type would be better than broad Exception
         except Exception as e:
             logger.error("Error in main loop: %s", e)
-            time.sleep(5)  # Wait a bit before retrying
+            time.sleep(5)
 
 
 if __name__ == "__main__":
