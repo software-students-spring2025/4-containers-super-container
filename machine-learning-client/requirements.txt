@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 pymongo==4.3.3
 pytest==7.3.1
 pytest-cov==4.1.0
@@ -8,17 +7,3 @@ scikit-learn==1.2.2
 numpy==1.24.3
 requests==2.31.0
 pytz==2023.3 
-=======
-
-pylint
-black
-pytest
-pytest-cov
-mongomock
-opencv-python
-deepface
-pymongo
-numpy
-Flask
-tf-keras
->>>>>>> 8029add5941617346227d75de343b4015ce909ab
