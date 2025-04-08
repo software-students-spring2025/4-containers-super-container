@@ -1,12 +1,12 @@
 
 pylint
 black
-pytest
-pytest-cov
 mongomock
-opencv-python
-deepface
-pymongo
-numpy
 Flask
 tf-keras
+numpy==1.24.4
+opencv-python==4.8.0.76
+deepface==0.0.83
+pymongo
+pytest
+pytest-cov

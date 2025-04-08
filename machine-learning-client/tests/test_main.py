@@ -1,6 +1,6 @@
 import os
-import pytest
-import numpy as np
+import pytest # pylint: disable=import-error
+import numpy as np # pylint: disable=import-error
 import cv2
 from unittest.mock import patch, MagicMock
 
