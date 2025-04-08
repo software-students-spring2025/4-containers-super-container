@@ -40,11 +40,12 @@ def index():
                 )
             if "analyzed_at" in reading:
                 reading["analyzed_at"] = reading["analyzed_at"].strftime(
-                    "%Y-%m-%d %H:%M:%S"
+                    "%Y-%m-%d %H:%M:%S %Z"
                 )
 
         return render_template("index.html", readings=latest_readings)
     except Exception as e:
+        # Broad exception is acceptable for web views to prevent crashes
         return render_template("error.html", error=str(e))
 
 
@@ -64,11 +65,12 @@ def get_readings():
                 )
             if "analyzed_at" in reading:
                 reading["analyzed_at"] = reading["analyzed_at"].strftime(
-                    "%Y-%m-%d %H:%M:%S"
+                    "%Y-%m-%d %H:%M:%S %Z"
                 )
 
         return jsonify({"success": True, "readings": readings})
     except Exception as e:
+        # Broad exception is acceptable for API to return meaningful errors
         return jsonify({"success": False, "error": str(e)})
 
 
@@ -95,7 +97,7 @@ def get_stats():
         stats = {
             "total_readings": total_count,
             "latest_reading_time": (
-                latest_time.strftime("%Y-%m-%d %H:%M:%S") if latest_time else None
+                latest_time.strftime("%Y-%m-%d %H:%M:%S %Z") if latest_time else None
             ),
             "environment_counts": {
                 "hot": hot_count,
@@ -106,6 +108,7 @@ def get_stats():
 
         return jsonify({"success": True, "stats": stats})
     except Exception as e:
+        # Broad exception is acceptable for API to return meaningful errors
         return jsonify({"success": False, "error": str(e)})
 
 

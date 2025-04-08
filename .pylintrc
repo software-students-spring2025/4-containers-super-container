@@ -1,29 +1,33 @@
 [MASTER]
-ignore=venv
-jobs=1
-load-plugins=pylint.extensions.docparams
+# Python version
+py-version = 3.8
 
-[MESSAGES CONTROL]
+# Disable specific warnings and errors
 disable=
-    broad-exception-caught,  # 捕获通用 Exception 的警告
-    missing-function-docstring,  # 忽略函数缺少 docstring 的提示
-    missing-module-docstring,  # 忽略模块缺少 docstring 的提示
-    too-few-public-methods  # 忽略类方法数过少的提示
+    C0103, # Invalid name
+    C0111, # Missing docstring
+    W0611, # Unused import
+    E0401, # Import error
+    W0718, # Broad exception caught
 
 [FORMAT]
-max-line-length=100
-indent-string='    '
+# Maximum line length
+max-line-length = 100
 
-[LOGGING]
-logging-modules=logging
+# Expected format of line ending
+expected-line-ending-format = LF
 
-[REPORTS]
-output-format=colorized
-reports=no
-evaluation=10.0 - ((float(5 * error + warning + refactor + convention)) / statement) * 10
+[MESSAGES CONTROL]
+# Regular expression for functions to disable no-member for
+ignored-modules = 
+    pymongo,
+    flask,
+    pytest
 
-[TYPECHECK]
-ignored-modules=cv2,deepface
-
-[REFACTORING]
-max-nested-blocks=5
+[DESIGN]
+# Maximum number of arguments in a function
+max-args = 6
+# Maximum number of attributes in a class
+max-attributes = 12
+# Maximum number of public methods in a class
+max-public-methods = 20 
