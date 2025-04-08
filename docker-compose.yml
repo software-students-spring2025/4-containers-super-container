@@ -17,12 +17,6 @@ services:
     build: ./machine-learning-client
     container_name: ml-client
     depends_on:
-      - mongodb
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017
-      - WEATHER_API_KEY="API_KEY"
-    networks:
-      - app-network
     restart: unless-stopped
 
   # Web App container
@@ -39,6 +33,3 @@ services:
       - app-network
     restart: unless-stopped
 
-networks:
-  app-network:
-    driver: bridge 
