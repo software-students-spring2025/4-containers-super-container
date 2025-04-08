@@ -18,8 +18,8 @@ services:
       - mongo
     volumes:
       - ./machine-learning-client/images:/app/images  # 映射图像文件
-    devices:
-      - "/dev/video0:/dev/video0"  # 仅适用于 Linux 摄像头
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
     restart: unless-stopped
 
   web:
@@ -36,4 +36,3 @@ services:
 
 volumes:
   mongo-data:
-
