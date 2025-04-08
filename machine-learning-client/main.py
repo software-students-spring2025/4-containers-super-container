@@ -45,7 +45,7 @@ def connect_to_mongodb():
 def generate_sensor_data():
     """获取真实天气数据"""
     # 直接使用原来有效的API密钥
-    API_KEY = "API_KEY"
+    API_KEY = os.getenv("WEATHER_API_KEY")
     city = "New York"  # 可以改为任何城市
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
 
@@ -73,6 +73,7 @@ def generate_sensor_data():
         logger.info("Retrieved weather data: %s", sensor_data)
         return sensor_data
     except Exception as e:
+        logger.error("API raw response: %s", response.text)
         logger.error("Failed to get weather data: %s", e)
         # 出错时回退到随机生成数据
         return generate_random_data()
