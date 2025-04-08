@@ -9,7 +9,7 @@ A containerized application that collects environmental sensor data, performs ma
 ## Team Members
 
 - [Xingjian Zhang](https://github.com/ScottZXJ123)
-- [Team Member 2](https://github.com/TeamMember2)
+- [Yukun Dong](https://github.com/abccdyk)
 - [Team Member 3](https://github.com/TeamMember3)
 - [Team Member 4](https://github.com/TeamMember4)
 
