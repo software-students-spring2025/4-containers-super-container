@@ -30,4 +30,3 @@ RUN python -c "from deepface import DeepFace; import cv2; print('✅ all depende
 EXPOSE 5000
 CMD ["python", "app/main.py"]
 
-
