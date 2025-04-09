@@ -3,17 +3,75 @@
 <head>
   <title>Emotion Detector</title>
   <style>
-    body { font-family: sans-serif; text-align: center; }
-    video, canvas { border: 1px solid #ccc; margin: 10px; }
-    #result { margin-top: 20px; font-size: 18px; }
+    body {
+      font-family: sans-serif;
+      background-color: rgb(234, 230, 225);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #card {
+      background-color: whitesmoke;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: rgb(52, 52, 52);
+    }
+
+    video {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgb(210, 210, 210);
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: rgb(201, 176, 150);
+      color: whitesmoke;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: rgb(193, 164, 141);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 16px;
+      color: rgb(52, 52, 52);
+    }
+
+    canvas {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <h1>📷 Real-Time Emotion Recognition</h1>
-  <video id="video" width="320" height="240" autoplay></video><br>
-  <button onclick="captureAndSend()">Capture and Analyze</button>
-  <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
-  <div id="result">Click the button to start analysis</div>
+  <div id="card">
+    <h1>📷 Real-Time Emotion Detector</h1>
+    <video id="video" width="320" height="240" autoplay></video><br>
+    <button onclick="captureAndSend()">Capture and Analyze</button>
+    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+    <div id="result">Click the button to start analysis</div>
+  </div>
 
   <script>
     const video = document.getElementById('video');
