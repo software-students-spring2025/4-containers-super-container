@@ -1,4 +1,3 @@
-
 version: '3.8'
 
 services:
@@ -17,7 +16,9 @@ services:
     depends_on:
       - mongo
     volumes:
-      - ./machine-learning-client/images:/app/images  # 映射图像文件
+      - ./machine-learning-client/images:/app/images
+    devices:
+      - "/dev/video0:/dev/video0"  # 挂载摄像头设备（Linux系统）
     environment:
       - MONGO_URI=mongodb://mongo:27017
     restart: unless-stopped
