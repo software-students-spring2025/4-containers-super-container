@@ -1,41 +1,14 @@
-
-version: '3.9'
+version: "3.8"
 
 services:
-  # MongoDB database container
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./mongo-data:/data/db
-    networks:
-      - app-network
-
-  client:
-    build: ./machine-learning-client
-    container_name: emotion-client
-    depends_on:
-      - mongo
-    volumes:
-      - ./machine-learning-client/images:/app/images  # 映射图像文件
-      - /dev:/dev
-    environment:
-      - MONGO_URI=mongodb://mongo:27017
-    restart: unless-stopped
-    privileged: true
-
   web-app:
     build: ./web-app
-    container_name: emotion-web
     ports:
-      - "3000:3000"
+      - "5000:5000"         # 外部访问 http://localhost:5000
     depends_on:
-      - mongo
-    volumes:
-      - ./machine-learning-client/images:/machine-learning-client/images
-    restart: unless-stopped
+      - ml-client           # 先启动 ml-client 服务
 
-volumes:
-  mongo-data:
+  ml-client:
+    build: ./machine-learning-client
+    ports:
+      - "5001:5001"         # 提供 /analyze 接口，供 web-app 访问

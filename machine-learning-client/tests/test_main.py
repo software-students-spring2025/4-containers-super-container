@@ -1,76 +1,58 @@
+import sys
 import os
-import pytest # pylint: disable=import-error
-import numpy as np # pylint: disable=import-error
-import cv2
-from unittest.mock import patch, MagicMock
 
-import app.main as main  # pylint: disable=import-error
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import io
+import base64
+import tempfile
+import pytest
+from app.main import app
 
-
-def test_capture_image_mock(monkeypatch):
-    # 模拟摄像头返回
-    class DummyCapture:
-        def read(self):
-            return True, "fake_frame"
-
-        def release(self):
-            pass
-
-    monkeypatch.setattr("cv2.VideoCapture", lambda _: DummyCapture())
-    frame = main.capture_image()
-    assert frame == "fake_frame"
+# 模拟图像（可以替换为任意小图片的 base64 编码）
+DUMMY_IMAGE_PATH = "tests/test_image.jpg"
 
 
-def test_analyze_emotion_mock():
-    # 模拟 DeepFace 返回情绪分析
-    with patch("app.main.DeepFace.analyze") as mock_analyze:
-        mock_analyze.return_value = [
-            {
-                "dominant_emotion": "happy",
-                "emotion": {"happy": np.float32(95.5), "sad": np.float32(3.2)},
-            }
-        ]
-        result = main.analyze_emotion("dummy_img")
-        assert result["dominant_emotion"] == "happy"
-        assert isinstance(result["emotion_scores"]["happy"], np.float32)
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    client = app.test_client()
+    yield client
 
 
-def test_save_image_to_file_creates_image(tmp_path):
-    dummy_image = np.zeros((100, 100, 3), dtype=np.uint8)
-    # 改变保存路径
-    old_dir = main.IMAGE_DIR
-    main.IMAGE_DIR = tmp_path
-    path = main.save_image_to_file(dummy_image)
-    assert os.path.exists(path)
-    main.IMAGE_DIR = old_dir
+def test_analyze_success(client, monkeypatch):
+    # 生成一张测试图像并编码为 base64
+    with open(DUMMY_IMAGE_PATH, "rb") as img_file:
+        img_bytes = img_file.read()
+    img_base64 = base64.b64encode(img_bytes).decode("utf-8")
+    data = {"image": f"data:image/jpeg;base64,{img_base64}"}
+
+    # 模拟 DeepFace.analyze 的返回值
+    fake_result = [
+        {
+            "dominant_emotion": "happy",
+            "emotion": {"happy": 0.95, "sad": 0.01, "neutral": 0.04},
+        }
+    ]
+    monkeypatch.setattr(
+        "app.main.DeepFace.analyze", lambda *args, **kwargs: fake_result
+    )
+
+    response = client.post("/analyze", json=data)
+    json_data = response.get_json()
+
+    assert response.status_code == 200
+    assert json_data["dominant_emotion"] == "happy"
+    assert "emotion_scores" in json_data
 
 
-def test_save_analysis(monkeypatch, tmp_path):
-    dummy_image = np.zeros((100, 100, 3), dtype=np.uint8)
-    dummy_result = {
-        "dominant_emotion": "sad",
-        "emotion_scores": {"happy": np.float32(88.8), "sad": np.float32(11.2)},
-    }
+def test_analyze_missing_image_key(client):
+    response = client.post("/analyze", json={})
+    assert response.status_code == 500
+    assert "error" in response.get_json()
 
-    # 模拟 MongoDB 插入
-    class DummyCollection:
-        def insert_one(self, doc):
-            assert isinstance(doc["timestamp"], object)
-            assert doc["dominant_emotion"] == "sad"
-            assert isinstance(doc["emotion_scores"]["happy"], float)
 
-    class DummyDB:
-        def __getitem__(self, name):
-            return DummyCollection()
-
-    class DummyClient:
-        def __getitem__(self, name):
-            return DummyDB()
-
-    monkeypatch.setattr("app.main.MongoClient", lambda _: DummyClient())
-
-    # 设置临时图像目录
-    old_dir = main.IMAGE_DIR
-    main.IMAGE_DIR = tmp_path
-    main.save_analysis(dummy_image, dummy_result)
-    main.IMAGE_DIR = old_dir
+def test_analyze_invalid_base64(client):
+    data = {"image": "data:image/jpeg;base64,INVALIDBASE64"}
+    response = client.post("/analyze", json=data)
+    assert response.status_code == 500
+    assert "error" in response.get_json()
