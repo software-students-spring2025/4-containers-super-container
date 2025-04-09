@@ -5,6 +5,7 @@ This module simulates sensor data collection, performs simple analysis,
 and saves results to MongoDB.
 """
 
+# Import modules that are necessary for this program
 import time
 import random
 import datetime
@@ -41,53 +42,52 @@ def connect_to_mongodb():
         logger.error("Failed to connect to MongoDB: %s", e)
         raise
 
-
+# Get real-time weather data from API
 def generate_sensor_data():
-    """获取真实天气数据"""
-    # 直接使用原来有效的API密钥
     API_KEY = "API_KEY"
-    city = "New York"  # 可以改为任何城市
+    city = "New York"  # Can be set to any city
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
 
     try:
-        response = requests.get(url, timeout=10)  # 添加10秒超时
+        response = requests.get(url, timeout=10)  # timeout after 10sec
         data = response.json()
 
-        # 提取需要的数据
+        # Get weather data including temperature, humidity, and cloud
         temperature = data["main"]["temp"]
         humidity = data["main"]["humidity"]
-        # 直接使用云量百分比
-        cloud_percent = data.get("clouds", {}).get("all", 0)  # 云量百分比 0-100
+        cloud_percent = data.get("clouds", {}).get("all", 0)
 
-        # 使用纽约时区
+        # Set time zone to New York
         ny_timezone = pytz.timezone("America/New_York")
         now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
 
+        # Store weather data in JSON compatible format
         sensor_data = {
             "temperature": temperature,
             "humidity": humidity,
-            "cloud_cover": cloud_percent,  # 云量百分比
+            "cloud_cover": cloud_percent,
             "timestamp": now,
         }
 
         logger.info("Retrieved weather data: %s", sensor_data)
         return sensor_data
     except Exception as e:
+        # Generate random data when error has occured
         logger.error("Failed to get weather data: %s", e)
-        # 出错时回退到随机生成数据
         return generate_random_data()
 
-
+# Generate random weather data
 def generate_random_data():
-    """生成随机数据作为备份"""
+    # Generate random temperature, humidity, and cloud
     temperature = round(random.uniform(15.0, 40.0), 2)
     humidity = round(random.uniform(30.0, 90.0), 2)
-    cloud_cover = round(random.uniform(0.0, 100.0), 0)  # 云量百分比 0-100
+    cloud_cover = round(random.uniform(0.0, 100.0), 0)
 
-    # 使用纽约时区
+    # Set timezone to New York
     ny_timezone = pytz.timezone("America/New_York")
     now = datetime.datetime.now(datetime.timezone.utc).astimezone(ny_timezone)
 
+    # Store weather data in JSON compatible format
     return {
         "temperature": temperature,
         "humidity": humidity,
@@ -95,12 +95,12 @@ def generate_random_data():
         "timestamp": now,
     }
 
-
+# Analyze the weather data
 def analyze_data(sensor_data):
-    """Analyze the data."""
     temperature = sensor_data["temperature"]
     humidity = sensor_data["humidity"]
 
+    # Determine temperature
     if temperature > 30:
         temp_status = "Hot"
     elif temperature < 20:
@@ -108,6 +108,7 @@ def analyze_data(sensor_data):
     else:
         temp_status = "Normal"
 
+    # Determine Humidity
     if humidity > 70:
         humidity_status = "Humid"
     elif humidity < 40:
@@ -152,7 +153,7 @@ def analyze_data(sensor_data):
         "analyzed_at": now,
     }
 
-
+# Save weather data to MongoDB
 def save_to_mongodb(collection, data):
     """
     Save merged sensor + analysis data to MongoDB.
