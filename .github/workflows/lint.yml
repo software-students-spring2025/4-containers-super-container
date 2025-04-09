@@ -37,10 +37,10 @@ jobs:
         if: ${{ hashFiles(format('{0}/**/*.py', matrix.subdir)) != '' }}
         working-directory: ${{ matrix.subdir }}
         run: |
-          pipenv run pylint --rcfile=../.pylintrc **/*.py || echo "⚠️ Lint failed"
+          pipenv run pylint --rcfile=../.pylintrc **/*.py || echo 
           
       - name: Format with black
         if: ${{ hashFiles(format('{0}/**/*.py', matrix.subdir)) != '' }}
         working-directory: ${{ matrix.subdir }}
         run: |
-          pipenv run black --diff --check . || echo "⚠️ Code needs formatting (black)"
+          pipenv run black --diff --check . || echo 
