@@ -13,10 +13,15 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     libxext6 \
     ffmpeg \
+    libgl1 \
+    libgtk2.0-dev \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install --upgrade pip setuptools wheel
 # 复制 requirements.txt 并安装 Python 依赖
 COPY requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install numpy==1.23.5
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制应用代码

@@ -1,12 +1,19 @@
-
+# Formatters & Linters
 pylint
 black
-mongomock
-Flask
-tf-keras
-numpy==1.24.4
-opencv-python==4.8.0.76
-deepface==0.0.83
-pymongo
+
+# Testing
 pytest
 pytest-cov
+mongomock
+
+# Web App
+Flask
+pymongo
+
+# ML & Deep Learning
+numpy==1.23.5
+opencv-python
+deepface==0.0.83
+tensorflow==2.12.0
+keras==2.12.0

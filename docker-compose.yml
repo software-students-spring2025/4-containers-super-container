@@ -1,5 +1,5 @@
 
-version: '3.8'
+version: '3.9'
 
 services:
   mongo:
@@ -11,23 +11,23 @@ services:
       - mongo-data:/data/db
 
   client:
-    build:
-      context: ./machine-learning-client
+    build: ./machine-learning-client
     container_name: emotion-client
     depends_on:
       - mongo
     volumes:
       - ./machine-learning-client/images:/app/images  # 映射图像文件
+      - /dev:/dev
     environment:
       - MONGO_URI=mongodb://mongo:27017
     restart: unless-stopped
+    privileged: true
 
-  web:
-    build:
-      context: ./web-app
+  web-app:
+    build: ./web-app
     container_name: emotion-web
     ports:
-      - "5000:5000"
+      - "3000:3000"
     depends_on:
       - mongo
     volumes:
