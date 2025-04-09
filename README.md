@@ -1,3 +1,4 @@
+![Lint-free](https://github.com/nyu-software-engineering/containerized-app-exercise/4-containers-super-container/actions/workflows/lint.yml/badge.svg)
 # Environment Sensor Analysis System
 
 A containerized application that collects environmental sensor data, performs machine learning analysis, and displays the results through a web interface. The system consists of three interconnected Docker containers:
