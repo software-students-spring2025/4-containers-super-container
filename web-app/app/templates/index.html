@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>情绪识别 - Web 前端</title>
+  <title>Emotion recognition system</title>
   <style>
     body { font-family: sans-serif; text-align: center; }
     video, canvas { border: 1px solid #ccc; margin: 10px; }
@@ -9,11 +9,11 @@
   </style>
 </head>
 <body>
-  <h1>📷 实时情绪识别</h1>
+  <h1>📷 Emotion recognition system</h1>
   <video id="video" width="320" height="240" autoplay></video><br>
-  <button onclick="captureAndSend()">拍照并分析</button>
+  <button onclick="captureAndSend()">Take a photo and analyze</button>
   <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
-  <div id="result">请点击按钮进行分析</div>
+  <div id="result">Click the button to analyze</div>
 
   <script>
     const video = document.getElementById('video');
@@ -22,7 +22,7 @@
 
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => { video.srcObject = stream; })
-      .catch(err => { alert("无法访问摄像头：" + err); });
+      .catch(err => { alert("Unable to access the camera: " + err); });
 
     function captureAndSend() {
       const context = canvas.getContext('2d');
@@ -36,10 +36,10 @@
       })
       .then(response => response.json())
       .then(data => {
-        resultDiv.innerHTML = `<strong>识别结果：</strong> ${data.dominant_emotion}<br><pre>${JSON.stringify(data.emotion_scores, null, 2)}</pre>`;
+        resultDiv.innerHTML = `<strong>Result: </strong> ${data.dominant_emotion}<br><pre>${JSON.stringify(data.emotion_scores, null, 2)}</pre>`;
       })
       .catch(err => {
-        resultDiv.innerHTML = "❌ 分析失败：" + err;
+        resultDiv.innerHTML = "❌ Analysis failed" + err;
       });
     }
   </script>

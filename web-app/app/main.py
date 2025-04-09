@@ -13,7 +13,7 @@ def index():
 def analyze():
     data = request.get_json()
     try:
-        # 转发给 ml-client 服务
+        # Forward to the ml-client service
         response = requests.post("http://ml-client:5001/analyze", json=data)
         return jsonify(response.json())
     except Exception as e:

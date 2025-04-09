@@ -17,18 +17,18 @@ def client():
 def test_index_route(client):
     response = client.get("/")
     assert response.status_code == 200
-    assert b"<html" in response.data  # 或者你可以检查标题、内容等
+    assert b"<html" in response.data  
 
 
 def test_analyze_success(client, monkeypatch):
-    # 模拟 ml-client 返回的 JSON
+    # Simulates the JSON returned by the ml-client
     dummy_response = {"dominant_emotion": "happy"}
 
     class MockResponse:
         def json(self):
             return dummy_response
 
-    # 替换 requests.post
+    # Replace requests.post
     monkeypatch.setattr(
         "app.main.requests.post", lambda *args, **kwargs: MockResponse()
     )

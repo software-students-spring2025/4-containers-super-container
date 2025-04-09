@@ -4,11 +4,11 @@ services:
   web-app:
     build: ./web-app
     ports:
-      - "5000:5000"         # 外部访问 http://localhost:5000
+      - "5000:5000"         # External access http://localhost:5000
     depends_on:
-      - ml-client           # 先启动 ml-client 服务
+      - ml-client           # Start the ml-client service first
 
   ml-client:
     build: ./machine-learning-client
     ports:
-      - "5001:5001"         # 提供 /analyze 接口，供 web-app 访问
+      - "5001:5001"         # Provide the /analyze interface for web-app access
