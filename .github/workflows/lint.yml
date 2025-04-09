@@ -37,7 +37,7 @@ jobs:
         if: ${{ hashFiles(format('{0}/**/*.py', matrix.subdir)) != '' }}
         working-directory: ${{ matrix.subdir }}
         run: |
-          pipenv run pylint --rcfile=../.pylintrc **/*.py || echo 
+          pylint --rcfile=../.pylintrc $(find . -name "*.py") 
           
       - name: Format with black
         if: ${{ hashFiles(format('{0}/**/*.py', matrix.subdir)) != '' }}
