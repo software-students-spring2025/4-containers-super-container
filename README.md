@@ -1,3 +1,5 @@
+![Lint](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/lint.yml/badge.svg)
+
 # Environment Sensor Analysis System
 
 A containerized application that collects environmental sensor data, performs machine learning analysis, and displays the results through a web interface. The system consists of three interconnected Docker containers:
@@ -10,7 +12,7 @@ A containerized application that collects environmental sensor data, performs ma
 
 - [Xingjian Zhang](https://github.com/ScottZXJ123)
 - [Yukun Dong](https://github.com/abccdyk)
-- [Team Member 3](https://github.com/TeamMember3)
+- [Hao Yang](https://github.com/Hao-Yang-Hao)
 - [Jiangbo Shen](https://github.com/js-montgomery)
 
 ## System Architecture
