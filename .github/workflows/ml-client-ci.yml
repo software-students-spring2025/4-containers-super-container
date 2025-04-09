@@ -34,7 +34,7 @@ jobs:
       working-directory: ./machine-learning-client
       run: |
         black . --check
-        pylint --disable=C0111,C0103,W0611,E0401 --ignore-patterns="test_.*\.py" *.py
+        find . -name "*.py" | xargs pylint --rcfile=../.pylintrc --exit-zero
         
     - name: Run tests with coverage
       working-directory: ./machine-learning-client

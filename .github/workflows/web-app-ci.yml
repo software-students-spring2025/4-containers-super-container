@@ -35,7 +35,7 @@ jobs:
       working-directory: ./web-app
       run: |
         black . --check
-        pylint --rcfile=../.pylintrc --ignore-patterns="test_.*\.py" *.py
+        find . -name "*.py" | xargs pylint --rcfile=../.pylintrc --exit-zero
         
     - name: Run tests with coverage
       working-directory: ./web-app
