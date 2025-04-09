@@ -1,45 +1,41 @@
 """Test suite for main Flask application."""
-
-import sys
-import os
 import pytest
-from unittest.mock import patch
-
-# 添加 app 路径到导入路径中
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "app"))
-)
-
-from main import app, collection  # pylint: disable=import-error
-
+from flask import Flask
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from app.main import app
 
 @pytest.fixture
-def client_fixture():
-    """Create a test client for the Flask app."""
+def client():
     app.config["TESTING"] = True
-    with app.test_client() as client:
-        yield client
+    return app.test_client()
 
+def test_index_route(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert b"<html" in response.data  # 或者你可以检查标题、内容等
 
-def test_index_route(client_fixture):
-    """Test the index route with mocked database records."""
-    mock_record = {
-        "timestamp": "2025-04-06T12:00:00Z",
-        "dominant_emotion": "happy",
-        "image_path": "images/fake.jpg",
-    }
+def test_analyze_success(client, monkeypatch):
+    # 模拟 ml-client 返回的 JSON
+    dummy_response = {"dominant_emotion": "happy"}
 
-    with patch.object(collection, "find") as mock_find:
-        mock_find.return_value.sort.return_value = [mock_record]
-        response = client_fixture.get("/")
-        assert response.status_code == 200
-        assert b"happy" in response.data
-        assert b"images/fake.jpg" in response.data
+    class MockResponse:
+        def json(self):
+            return dummy_response
 
+    # 替换 requests.post
+    monkeypatch.setattr("app.main.requests.post", lambda *args, **kwargs: MockResponse())
 
-def test_serve_image_route(client_fixture):
-    """Test the image-serving route with mock send_from_directory."""
-    with patch("main.send_from_directory") as mock_send:
-        mock_send.return_value = "mocked image"
-        response = client_fixture.get("/images/fake.jpg")
-        assert response.status_code == 200
+    response = client.post("/analyze", json={"image": "data:image/jpeg;base64,fake"})
+    assert response.status_code == 200
+    assert response.get_json() == dummy_response
+
+def test_analyze_failure(client, monkeypatch):
+    def raise_error(*args, **kwargs):
+        raise requests.exceptions.RequestException("ml-client error")
+
+    monkeypatch.setattr("app.main.requests.post", raise_error)
+
+    response = client.post("/analyze", json={"image": "data:image/jpeg;base64,fake"})
+    assert response.status_code == 500
+    assert "error" in response.get_json()
