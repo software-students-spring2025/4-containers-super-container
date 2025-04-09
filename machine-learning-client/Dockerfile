@@ -1,27 +1,33 @@
-
-# 使用官方轻量 Python 镜像
 FROM python:3.10-slim
 
-# 设置工作目录
-WORKDIR /app
-
-# 安装系统依赖（为 opencv, deepface 等做准备）
+# 安装构建 numpy wheel 所需的基本依赖
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    libgl1 \
     libglib2.0-0 \
-    libsm6 \
-    libxrender1 \
-    libxext6 \
-    ffmpeg \
+    build-essential \
+    python3-dev \
+    libatlas-base-dev \
+    gfortran \
     && rm -rf /var/lib/apt/lists/*
 
-# 复制 requirements.txt 并安装 Python 依赖
-COPY requirements.txt .
+WORKDIR /app
+COPY . /app
+
+# 升级 pip + setuptools + wheel，强制安装 numpy
+RUN pip install --upgrade pip setuptools wheel
+
+# 👇 关键点：单独提前装 numpy，避免它参与 pyproject.toml 编译
+RUN pip install "numpy==1.23.5" --no-deps
+
+# 然后再装其他依赖
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 复制应用代码
-COPY app/ app/
+RUN pip install "numpy==1.23.5" --no-deps
 
-# 进入子目录执行程序
+# ✅ 依赖健康检查
+RUN python -c "from deepface import DeepFace; import cv2; print('✅ all dependencies loaded')"
+
+EXPOSE 5000
 CMD ["python", "app/main.py"]
+
 

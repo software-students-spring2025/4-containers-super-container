@@ -5,5 +5,5 @@ pytest
 coverage
 black
 pylint
-
+requests
 
