@@ -9,6 +9,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
@@ -24,12 +25,15 @@ def analyze():
         img = cv2.imread(filepath)
         result = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)[0]
 
-        return jsonify({
-            "dominant_emotion": result["dominant_emotion"],
-            "emotion_scores": result["emotion"]
-        })
+        return jsonify(
+            {
+                "dominant_emotion": result["dominant_emotion"],
+                "emotion_scores": result["emotion"],
+            }
+        )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)

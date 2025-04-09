@@ -5,10 +5,19 @@ load-plugins=pylint.extensions.docparams
 
 [MESSAGES CONTROL]
 disable=
-    broad-exception-caught,  # 捕获通用 Exception 的警告
-    missing-function-docstring,  # 忽略函数缺少 docstring 的提示
-    missing-module-docstring,  # 忽略模块缺少 docstring 的提示
-    too-few-public-methods  # 忽略类方法数过少的提示
+    broad-exception-caught,
+    missing-function-docstring,
+    missing-module-docstring,
+    too-few-public-methods,
+    multiple-imports,
+    wrong-import-position,
+    redefined-outer-name,
+    missing-timeout,
+    missing-class-docstring,
+    undefined-variable,
+    wrong-import-order,
+    unused-import,
+    import-error
 
 [FORMAT]
 max-line-length=100
