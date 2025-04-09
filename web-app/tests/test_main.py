@@ -8,17 +8,20 @@ import sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from app.main import app
 
+
 # Create a test client for Flask
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
     return app.test_client()
 
+
 # Test the index route and ensure it loads correctly
 def test_index_route(client):
-    response = client.get("/")              # Simulate GET request
-    assert response.status_code == 200      # Check status code
-    assert b"<html" in response.data        # Check html content
+    response = client.get("/")  # Simulate GET request
+    assert response.status_code == 200  # Check status code
+    assert b"<html" in response.data  # Check html content
+
 
 # Test the analyze route with a successful mock response
 def test_analyze_success(client, monkeypatch):
@@ -40,6 +43,7 @@ def test_analyze_success(client, monkeypatch):
     assert response.status_code == 200
     assert response.get_json() == dummy_response
 
+
 # Test the analyze route when an error occurs
 def test_analyze_failure(client, monkeypatch):
     def raise_error(*args, **kwargs):
@@ -49,5 +53,5 @@ def test_analyze_failure(client, monkeypatch):
 
     # Simulate a POST request to the /analyze endpoint
     response = client.post("/analyze", json={"image": "data:image/jpeg;base64,fake"})
-    assert response.status_code == 500          # Should return a server error
-    assert "error" in response.get_json()       # Error message should be included
+    assert response.status_code == 500  # Should return a server error
+    assert "error" in response.get_json()  # Error message should be included

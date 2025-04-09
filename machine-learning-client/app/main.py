@@ -13,6 +13,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+
 # Route handles POST requests to analyze facial emotions
 @app.route("/analyze", methods=["POST"])
 def analyze():
@@ -36,14 +37,17 @@ def analyze():
         result = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)[0]
 
         # Return dominant emotion and emotion score dictionary
-        return jsonify({
-            "dominant_emotion": result["dominant_emotion"],
-            "emotion_scores": result["emotion"],
-        })
+        return jsonify(
+            {
+                "dominant_emotion": result["dominant_emotion"],
+                "emotion_scores": result["emotion"],
+            }
+        )
 
     # Catch and return any unexpected error as JSON with HTTP 500
     except Exception as error:
         return jsonify({"error": str(error)}), 500
+
 
 # Run the Flask app at port 5001
 if __name__ == "__main__":

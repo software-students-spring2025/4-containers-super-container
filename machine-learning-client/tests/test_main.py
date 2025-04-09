@@ -12,12 +12,14 @@ from app.main import app
 # Sample image (can be replace by any base64-encoded image)
 DUMMY_IMAGE_PATH = "tests/test_image.jpg"
 
+
 # Sets the app in testing mode
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
     client = app.test_client()
     yield client
+
 
 # Test the /analyze endpoint with valid base64 image input
 def test_analyze_success(client, monkeypatch):
@@ -46,12 +48,14 @@ def test_analyze_success(client, monkeypatch):
     assert json_data["dominant_emotion"] == "happy"
     assert "emotion_scores" in json_data
 
+
 # Test the /analyze endpoint when the 'image' key is missing
 # Should return a 500 error with an appropriate error message
 def test_analyze_missing_image_key(client):
     response = client.post("/analyze", json={})
     assert response.status_code == 500
     assert "error" in response.get_json()
+
 
 # Test the /analyze endpoint with an invalid base64 string
 # Should return a 500 error indicating decoding failure
