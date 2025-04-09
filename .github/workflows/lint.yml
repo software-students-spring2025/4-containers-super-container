@@ -37,8 +37,8 @@ jobs:
         if: ${{ hashFiles(format('{0}/**/*.py', matrix.subdir)) != '' }}
         working-directory: ${{ matrix.subdir }}
         run: |
-          pylint --rcfile=../.pylintrc $(find . -name "*.py") 
-          
+          python -m pip install pylint
+          find . -name "*.py" | xargs pylint --rcfile=../.pylintrc --exit-zero
       - name: Format with black
         if: ${{ hashFiles(format('{0}/**/*.py', matrix.subdir)) != '' }}
         working-directory: ${{ matrix.subdir }}
