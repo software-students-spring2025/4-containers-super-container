@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 pymongo==4.3.3
 pytest==7.3.1
 pytest-cov==4.1.0
@@ -7,3 +8,24 @@ scikit-learn==1.2.2
 numpy==1.24.3
 requests==2.31.0
 pytz==2023.3 
+=======
+# Formatters & Linters
+pylint
+black
+
+# Testing
+pytest
+pytest-cov
+mongomock
+
+# Web App
+Flask
+pymongo
+
+# ML & Deep Learning
+numpy==1.23.5
+opencv-python
+deepface==0.0.83
+tensorflow==2.12.0
+keras==2.12.0
+>>>>>>> js-2

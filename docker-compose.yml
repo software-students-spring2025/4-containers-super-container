@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 version: '3'
+=======
+
+version: '3.9'
+>>>>>>> js-2
 
 services:
   # MongoDB database container
@@ -12,6 +17,7 @@ services:
     networks:
       - app-network
 
+<<<<<<< HEAD
   # Machine Learning client container
   ml-client:
     build: ./machine-learning-client
@@ -23,8 +29,22 @@ services:
       - WEATHER_API_KEY="API_KEY"
     networks:
       - app-network
+=======
+  client:
+    build: ./machine-learning-client
+    container_name: emotion-client
+    depends_on:
+      - mongo
+    volumes:
+      - ./machine-learning-client/images:/app/images  # 映射图像文件
+      - /dev:/dev
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+>>>>>>> js-2
     restart: unless-stopped
+    privileged: true
 
+<<<<<<< HEAD
   # Web App container
   web-app:
     build: ./web-app
@@ -42,3 +62,18 @@ services:
 networks:
   app-network:
     driver: bridge 
+=======
+  web-app:
+    build: ./web-app
+    container_name: emotion-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    volumes:
+      - ./machine-learning-client/images:/machine-learning-client/images
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+>>>>>>> js-2

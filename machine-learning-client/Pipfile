@@ -1,6 +1,7 @@
 [[source]]
 url = "https://pypi.org/simple"
 verify_ssl = true
+<<<<<<< HEAD
 name = "pypi"
 
 [packages]
@@ -17,3 +18,26 @@ black = "==23.3.0"
 
 [requires]
 python_version = "3.9" 
+=======
+
+[requires]
+python_version = "3.10"
+
+[packages]
+tensorflow-cpu = "2.19.0"
+numpy = "==1.24.4"
+opencv-python = "==4.8.0.76"
+deepface = "==0.0.83"
+pymongo = "*"
+tf_keras = "*"
+
+[dev-packages]
+pytest = "*"
+coverage = "*"
+black = "*"
+pylint = "*"
+
+[scripts]
+start = "python app/main.py"
+test = "pytest"
+>>>>>>> js-2
