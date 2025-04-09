@@ -12,7 +12,7 @@ A containerized application that collects environmental sensor data, performs ma
 
 - [Xingjian Zhang](https://github.com/ScottZXJ123)
 - [Yukun Dong](https://github.com/abccdyk)
-- [Team Member 3](https://github.com/TeamMember3)
+- [Hao Yang](https://github.com/Hao-Yang-Hao)
 - [Jiangbo Shen](https://github.com/js-montgomery)
 
 ## System Architecture
