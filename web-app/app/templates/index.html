@@ -1,19 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
+<<<<<<< HEAD
   <title>Emotion recognition system</title>
+=======
+  <title>Emotion Detector</title>
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
   <style>
-    body { font-family: sans-serif; text-align: center; }
-    video, canvas { border: 1px solid #ccc; margin: 10px; }
-    #result { margin-top: 20px; font-size: 18px; }
+    body {
+      font-family: sans-serif;
+      background-color: rgb(234, 230, 225);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(-45deg,
+        rgb(246, 239, 233),
+        rgb(221, 201, 182),
+        rgb(250, 245, 240),
+        rgb(179, 128, 97) 
+      );
+      background-size: 400% 400%;
+      animation: gradientBG 20s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    #card {
+      background-color: whitesmoke;
+      border-radius: 20px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: rgb(52, 52, 52);
+    }
+
+    video {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgb(210, 210, 210);
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: rgb(201, 176, 150);
+      color: whitesmoke;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background-color: rgb(193, 164, 141);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 16px;
+      color: rgb(52, 52, 52);
+    }
+
+    canvas {
+      display: none;
+    }
   </style>
 </head>
 <body>
+<<<<<<< HEAD
   <h1>📷 Emotion recognition system</h1>
   <video id="video" width="320" height="240" autoplay></video><br>
   <button onclick="captureAndSend()">Take a photo and analyze</button>
   <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
   <div id="result">Click the button to analyze</div>
+=======
+  <div id="card">
+    <h1>📷 Real-Time Emotion Detector</h1>
+    <video id="video" width="320" height="240" autoplay></video><br>
+    <button onclick="captureAndSend()">Capture and Analyze</button>
+    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+    <div id="result">Click the button to start analysis</div>
+  </div>
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
 
   <script>
     const video = document.getElementById('video');
@@ -22,7 +112,11 @@
 
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => { video.srcObject = stream; })
+<<<<<<< HEAD
       .catch(err => { alert("Unable to access the camera: " + err); });
+=======
+      .catch(err => { alert("Cannot access camera: " + err); });
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
 
     function captureAndSend() {
       const context = canvas.getContext('2d');
@@ -36,10 +130,17 @@
       })
       .then(response => response.json())
       .then(data => {
+<<<<<<< HEAD
         resultDiv.innerHTML = `<strong>Result: </strong> ${data.dominant_emotion}<br><pre>${JSON.stringify(data.emotion_scores, null, 2)}</pre>`;
       })
       .catch(err => {
         resultDiv.innerHTML = "❌ Analysis failed" + err;
+=======
+        resultDiv.innerHTML = `<strong>Detected Emotion: </strong> ${data.dominant_emotion}<br><pre>${JSON.stringify(data.emotion_scores, null, 2)}</pre>`;
+      })
+      .catch(err => {
+        resultDiv.innerHTML = "❌ Analysis failed: " + err;
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
       });
     }
   </script>
