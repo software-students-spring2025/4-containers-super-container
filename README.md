@@ -49,14 +49,14 @@ The system uses a microservices architecture with two main containers:
    ```
 
 3. Access the web application:
-   - Open your browser and go to [http://localhost:5000](http://localhost:5000)
+   - Open your browser and go to [http://localhost:8081](http://localhost:8081)
    - Grant camera access permissions when prompted
    - Click "Capture and Analyze" to detect emotions in the captured image
 
 ### Container Details
 
-- **ML Client**: Runs on port 5001 and provides the `/analyze` endpoint
-- **Web App**: Accessible at http://localhost:5000
+- **ML Client**: Runs on port 5002 and provides the `/analyze` endpoint
+- **Web App**: Accessible at http://localhost:8081
 
 ## Project Structure
 
@@ -90,11 +90,11 @@ The system uses a microservices architecture with two main containers:
 
 ## API Endpoints
 
-### Web App (port 5000)
+### Web App (port 5000 internally, 8081 externally)
 - `GET /`: Main web interface for the application
 - `POST /analyze`: Accepts image data and forwards to ML client
 
-### ML Client (port 5001)
+### ML Client (port 5002)
 - `POST /analyze`: Accepts image data and returns emotion analysis results
 
 ## Development
