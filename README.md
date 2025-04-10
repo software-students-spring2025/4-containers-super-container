@@ -28,7 +28,9 @@ The system uses a microservices architecture with two main containers:
   - Provides a user interface for camera access
   - Forwards captured images to the ML client
   - Displays emotion analysis results
-
+- **MongoDB database**:
+  - Use MongoDB to store the pictures.
+  
 ## Setup and Installation
 
 ### Prerequisites
