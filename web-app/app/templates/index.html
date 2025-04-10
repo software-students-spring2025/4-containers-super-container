@@ -163,7 +163,7 @@
       {% for doc in data %}
       <div class="dataPanel">
         {% for key, value in doc.items() %}
-          {% if key != "_id" and key != "timestamp" %}
+          {% if key != "_id" %}
           <p><strong>{{ key }}:</strong> {{ value }}</p>
           {% endif %}
         {% endfor %}
