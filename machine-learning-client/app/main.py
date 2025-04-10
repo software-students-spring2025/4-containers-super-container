@@ -51,6 +51,7 @@ def analyze():
         time = {"timestamp": datetime.datetime.utcnow()}
         merge = dom | emo | time
         insert = collection.insert_one(merge)
+        print(insert)
 
         # Return dominant emotion and emotion score dictionary
         return jsonify(

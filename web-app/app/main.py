@@ -33,13 +33,13 @@ def analyze():
 
 
 # Load data history
-@app.route('/view-data')
+@app.route("/view-data")
 def view_data():
     try:
         data = list(collection.find())
-        return render_template('index.html', data=data)
-    except Exception as e:
-        return f"Error: {str(e)}"
+        return render_template("index.html", data=data)
+    except Exception as error:
+        return f"Error: {str(error)}"
 
 
 # Start the Flask app on host 0.0.0.0 and port 8888
