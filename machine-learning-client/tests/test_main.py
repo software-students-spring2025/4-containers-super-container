@@ -10,12 +10,14 @@ import pytest
 import app.main
 from app.main import app
 
+
 # 创建一个测试客户端
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
+
 
 def test_analyze_valid_image(client):
     # 构造一个简单的黑图像
@@ -28,9 +30,12 @@ def test_analyze_valid_image(client):
         b64_image = base64.b64encode(img_file.read()).decode("utf-8")
     os.unlink(tmp_file.name)
 
-    response = client.post("/analyze", json={"image": "data:image/jpeg;base64," + b64_image})
+    response = client.post(
+        "/analyze", json={"image": "data:image/jpeg;base64," + b64_image}
+    )
     assert response.status_code in (200, 500)  # DeepFace可能报错但服务稳定
     assert "dominant_emotion" in response.json or "error" in response.json
+
 
 def test_analyze_invalid_data(client):
     response = client.post("/analyze", json={"image": "not a real image"})
