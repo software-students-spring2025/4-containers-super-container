@@ -1,6 +1,8 @@
 # Emotion Detection System
 
 ![Lint](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/lint.yml/badge.svg)
+![ml-client-ci](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/ml-client-ci.yml/badge.svg)
+![web-app-ci](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/web-app-ci.yml/badge.svg)
 
 A containerized application that analyzes facial emotions using deep learning and displays results through a web interface. The system consists of two Docker containers working together:
 
