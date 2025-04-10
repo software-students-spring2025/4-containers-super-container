@@ -25,6 +25,6 @@ def analyze():
         return jsonify({"error": str(error)}), 500
 
 
-# Start the Flask app on host 0.0.0.0 and port 5000
+# Start the Flask app on host 0.0.0.0 and port 8888
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=8888)

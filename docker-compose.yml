@@ -4,7 +4,7 @@ services:
   web-app:
     build: ./web-app
     ports:
-      - "5000:5000"         # 外部访问 http://localhost:5000
+      - "8888:8888"         # 外部访问 http://localhost:5000
     depends_on:
       - ml-client           # 先启动 ml-client 服务
 
