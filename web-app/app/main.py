@@ -18,7 +18,7 @@ def analyze():
     data = request.get_json()
     try:
         # Forward the data to the machine learning client
-        response = requests.post("http://ml-client:5001/analyze", json=data)
+        response = requests.post("http://ml-client:5002/analyze", json=data)
         return jsonify(response.json())
     except Exception as error:
         # If anything goes wrong, return an error message with status code 500

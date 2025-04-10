@@ -4,11 +4,12 @@ services:
   web-app:
     build: ./web-app
     ports:
-      - "5000:5000"         # External access http://localhost:5000
+      - "8081:5000"         # External access at http://localhost:8081
     depends_on:
-      - ml-client           # Start the ml-client service first
+      - ml-client           # Start ml-client service first
+
 
   ml-client:
     build: ./machine-learning-client
     ports:
-      - "5001:5001"         # Provide the /analyze interface for web-app access
+      - "5002:5002"         # Provides /analyze endpoint for web-app

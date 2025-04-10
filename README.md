@@ -1,12 +1,13 @@
+# Emotion Detection System
+
 ![Lint](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/lint.yml/badge.svg)
+![ml-client-ci](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/ml-client-ci.yml/badge.svg)
+![web-app-ci](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/web-app-ci.yml/badge.svg)
 
-# Environment Sensor Analysis System
+A containerized application that analyzes facial emotions using deep learning and displays results through a web interface. The system consists of two Docker containers working together:
 
-A containerized application that collects environmental sensor data, performs machine learning analysis, and displays the results through a web interface. The system consists of three interconnected Docker containers:
-
-1. **MongoDB Database** - Stores sensor readings and analysis results
-2. **Machine Learning Client** - Simulates sensor data collection and performs ML-based analysis
-3. **Web Application** - Displays the data and analysis results in a user-friendly dashboard
+1. **Machine Learning Client** - Performs facial emotion analysis using DeepFace
+2. **Web Application** - Provides a user interface for capturing and analyzing images
 
 ## Team Members
 
@@ -17,17 +18,16 @@ A containerized application that collects environmental sensor data, performs ma
 
 ## System Architecture
 
-The system uses a microservices architecture with three containers:
+The system uses a microservices architecture with two main containers:
 
-- **MongoDB**: Stores all sensor data and analysis results
 - **ML Client**: Python application that:
-  - Collects sensor data (temperature, humidity, light levels)
-  - Analyzes the data using machine learning (Random Forest classifier)
-  - Stores results in MongoDB
+  - Receives images via a REST API
+  - Analyzes facial emotions using DeepFace
+  - Returns emotion classification results
 - **Web App**: Flask-based web application that:
-  - Retrieves data from MongoDB
-  - Displays sensor readings and analysis in a dashboard
-  - Provides API endpoints for data access
+  - Provides a user interface for camera access
+  - Forwards captured images to the ML client
+  - Displays emotion analysis results
 
 ## Setup and Installation
 
@@ -40,7 +40,7 @@ The system uses a microservices architecture with three containers:
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/Your-Username/4-containers-super-container.git
+   git clone https://github.com/software-students-spring2025/4-containers-super-container.git
    cd 4-containers-super-container
    ```
 
@@ -50,44 +50,58 @@ The system uses a microservices architecture with three containers:
    docker-compose up --build
    ```
 
-3. Access the web dashboard:
-   - Open your browser and go to [http://localhost:8080](http://localhost:8080)
+3. Access the web application:
+   - Open your browser and go to [http://localhost:8081](http://localhost:8081)
+   - Grant camera access permissions when prompted
+   - Click "Capture and Analyze" to detect emotions in the captured image
 
 ### Container Details
 
-- **MongoDB**: Runs on port 27017 (accessible within the container network)
-- **ML Client**: Automatically collects and analyzes data every 10 seconds
-- **Web App**: Accessible at http://localhost:8080
+- **ML Client**: Runs on port 5002 and provides the `/analyze` endpoint
+- **Web App**: Accessible at http://localhost:8081
 
-## Development
-
-### Environment Variables
-
-The system uses the following environment variables (already configured in docker-compose.yml):
-
-- `MONGO_URI`: MongoDB connection string (default: `mongodb://mongodb:27017`)
-
-### Project Structure
+## Project Structure
 
 ```
 .
-├── docker-compose.yml          # Docker Compose configuration
-├── machine-learning-client/    # ML client code
+├── docker-compose.yml           # Docker Compose configuration
+├── machine-learning-client/     # ML client code
 │   ├── Dockerfile
-│   ├── main.py                 # Main ML client application
-│   ├── requirements.txt        # Python dependencies
-│   └── test_ml_client.py       # Unit tests
-└── web-app/                    # Flask web application
+│   ├── app/
+│   │   └── main.py              # Main ML client application
+│   ├── tests/                   # Unit tests
+│   ├── uploads/                 # Temporary image storage
+│   └── requirements.txt         # Python dependencies
+└── web-app/                     # Flask web application
     ├── Dockerfile
-    ├── app.py                  # Main Flask application
-    ├── requirements.txt        # Python dependencies
-    ├── templates/              # HTML templates
-    │   ├── error.html
-    │   └── index.html
-    └── test_app.py             # Unit tests
+    ├── app/
+    │   ├── main.py              # Main Flask application
+    │   └── templates/           # HTML templates
+    │       ├── error.html
+    │       └── index.html       # Main UI
+    ├── tests/                   # Unit tests
+    └── requirements.txt         # Python dependencies
 ```
 
-### Running Tests Locally
+## Technologies Used
+
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: Flask (Python)
+- **Machine Learning**: DeepFace, TensorFlow, OpenCV
+- **Infrastructure**: Docker, Docker Compose
+
+## API Endpoints
+
+### Web App 
+- `GET /`: Main web interface for the application
+- `POST /analyze`: Accepts image data and forwards to ML client
+
+### ML Client (port 5002)
+- `POST /analyze`: Accepts image data and returns emotion analysis results
+
+## Development
+
+### Running Tests
 
 #### Machine Learning Client
 
@@ -105,17 +119,14 @@ pip install -r requirements.txt
 pytest --cov=.
 ```
 
-## APIs
+## Features
 
-The web app provides the following API endpoints:
+- Real-time camera capture
+- Facial emotion detection (happiness, sadness, anger, fear, surprise, disgust, neutral)
+- Display of emotion confidence scores
+- Modern, responsive UI
 
-- `GET /api/readings`: Returns the latest 50 sensor readings as JSON
-- `GET /api/stats`: Returns statistics about the collected data
+## Projects Sprint
 
-## Extending the System
-
-To extend the system with additional sensors or analysis:
-
-1. Modify the `generate_sensor_data()` function in `machine-learning-client/main.py` to include new sensor types
-2. Update the `analyze_data()` function to perform additional analysis
-3. Update the web app templates to display the new data
+- [Sprint1](https://github.com/orgs/software-students-spring2025/projects/159/views/1)
+- [Sprint2](https://github.com/orgs/software-students-spring2025/projects/209)
