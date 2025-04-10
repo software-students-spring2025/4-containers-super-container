@@ -90,6 +90,7 @@ The system uses a microservices architecture with two main containers:
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Flask (Python)
 - **Machine Learning**: DeepFace, TensorFlow, OpenCV
+- **Database**: MongoDB
 - **Infrastructure**: Docker, Docker Compose
 
 ## API Endpoints
