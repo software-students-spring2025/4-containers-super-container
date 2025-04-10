@@ -128,5 +128,5 @@ pytest --cov=.
 
 ## Projects Sprint
 
-![Sprint1](https://github.com/orgs/software-students-spring2025/projects/159/views/1)
-![Sprint2](https://github.com/orgs/software-students-spring2025/projects/209)
+- [Sprint1](https://github.com/orgs/software-students-spring2025/projects/159/views/1)
+- [Sprint2](https://github.com/orgs/software-students-spring2025/projects/209)
