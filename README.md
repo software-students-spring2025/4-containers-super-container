@@ -1,6 +1,8 @@
 # Emotion Detection System
 
 ![Lint](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/lint.yml/badge.svg)
+![ml-client-ci](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/ml-client-ci.yml/badge.svg)
+![web-app-ci](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/web-app-ci.yml/badge.svg)
 
 A containerized application that analyzes facial emotions using deep learning and displays results through a web interface. The system consists of two Docker containers working together:
 
@@ -49,14 +51,14 @@ The system uses a microservices architecture with two main containers:
    ```
 
 3. Access the web application:
-   - Open your browser and go to [http://localhost:5000](http://localhost:5000)
+   - Open your browser and go to [http://localhost:8081](http://localhost:8081)
    - Grant camera access permissions when prompted
    - Click "Capture and Analyze" to detect emotions in the captured image
 
 ### Container Details
 
-- **ML Client**: Runs on port 5001 and provides the `/analyze` endpoint
-- **Web App**: Accessible at http://localhost:5000
+- **ML Client**: Runs on port 5002 and provides the `/analyze` endpoint
+- **Web App**: Accessible at http://localhost:8081
 
 ## Project Structure
 
@@ -90,11 +92,11 @@ The system uses a microservices architecture with two main containers:
 
 ## API Endpoints
 
-### Web App (port 5000)
+### Web App 
 - `GET /`: Main web interface for the application
 - `POST /analyze`: Accepts image data and forwards to ML client
 
-### ML Client (port 5001)
+### ML Client (port 5002)
 - `POST /analyze`: Accepts image data and returns emotion analysis results
 
 ## Development
@@ -123,3 +125,8 @@ pytest --cov=.
 - Facial emotion detection (happiness, sadness, anger, fear, surprise, disgust, neutral)
 - Display of emotion confidence scores
 - Modern, responsive UI
+
+## Projects Sprint
+
+- [Sprint1](https://github.com/orgs/software-students-spring2025/projects/159/views/1)
+- [Sprint2](https://github.com/orgs/software-students-spring2025/projects/209)
