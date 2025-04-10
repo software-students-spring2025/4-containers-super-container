@@ -18,14 +18,24 @@ def client():
 
 # Test the index route and ensure it loads correctly
 def test_index_route(client):
+<<<<<<< HEAD
+    response = client.get("/")
+    assert response.status_code == 200
+    assert b"<html" in response.data  
+=======
     response = client.get("/")  # Simulate GET request
     assert response.status_code == 200  # Check status code
     assert b"<html" in response.data  # Check html content
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
 
 
 # Test the analyze route with a successful mock response
 def test_analyze_success(client, monkeypatch):
+<<<<<<< HEAD
+    # Simulates the JSON returned by the ml-client
+=======
     # Sample response JSON that ml-client might return
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
     dummy_response = {"dominant_emotion": "happy"}
 
     # Define a MockResponse class

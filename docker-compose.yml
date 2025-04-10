@@ -8,6 +8,7 @@ services:
     depends_on:
       - ml-client           # Start ml-client service first
 
+
   ml-client:
     build: ./machine-learning-client
     ports:

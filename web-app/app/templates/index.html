@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<<<<<<< HEAD
+  <title>Emotion recognition system</title>
+=======
   <title>Emotion Detector</title>
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
   <style>
     body {
       font-family: sans-serif;
@@ -85,6 +89,13 @@
   </style>
 </head>
 <body>
+<<<<<<< HEAD
+  <h1>📷 Emotion recognition system</h1>
+  <video id="video" width="320" height="240" autoplay></video><br>
+  <button onclick="captureAndSend()">Take a photo and analyze</button>
+  <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+  <div id="result">Click the button to analyze</div>
+=======
   <div id="card">
     <h1>📷 Real-Time Emotion Detector</h1>
     <video id="video" width="320" height="240" autoplay></video><br>
@@ -92,6 +103,7 @@
     <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
     <div id="result">Click the button to start analysis</div>
   </div>
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
 
   <script>
     const video = document.getElementById('video');
@@ -100,7 +112,11 @@
 
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => { video.srcObject = stream; })
+<<<<<<< HEAD
+      .catch(err => { alert("Unable to access the camera: " + err); });
+=======
       .catch(err => { alert("Cannot access camera: " + err); });
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
 
     function captureAndSend() {
       const context = canvas.getContext('2d');
@@ -114,10 +130,17 @@
       })
       .then(response => response.json())
       .then(data => {
+<<<<<<< HEAD
+        resultDiv.innerHTML = `<strong>Result: </strong> ${data.dominant_emotion}<br><pre>${JSON.stringify(data.emotion_scores, null, 2)}</pre>`;
+      })
+      .catch(err => {
+        resultDiv.innerHTML = "❌ Analysis failed" + err;
+=======
         resultDiv.innerHTML = `<strong>Detected Emotion: </strong> ${data.dominant_emotion}<br><pre>${JSON.stringify(data.emotion_scores, null, 2)}</pre>`;
       })
       .catch(err => {
         resultDiv.innerHTML = "❌ Analysis failed: " + err;
+>>>>>>> b99d6b28adb5dc9b85cb9e2ff8bea58ec841204a
       });
     }
   </script>
