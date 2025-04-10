@@ -1,28 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>情绪识别 - Web 前端</title>
+  <title>Emotion Detector</title>
   <style>
-    body { font-family: sans-serif; text-align: center; }
-    video, canvas { border: 1px solid #ccc; margin: 10px; }
-    #result { margin-top: 20px; font-size: 18px; }
+    body {
+  font-family: sans-serif;
+  background-color: rgb(234, 230, 225);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(-45deg,
+    rgb(246, 239, 233),
+    rgb(221, 201, 182),
+    rgb(250, 245, 240),
+    rgb(179, 128, 97)
+  );
+  background-size: 400% 400%;
+  animation: gradientBG 20s ease infinite;
+}
+
+
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    #card {
+        background-color: whitesmoke;
+        border-radius: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        width: 100%;
+        max-width: 700px;
+        margin: 40px 10px;
+        text-align: center;
+}
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: rgb(52, 52, 52);
+    }
+
+    video {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgb(210, 210, 210);
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: rgb(201, 176, 150);
+      color: whitesmoke;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 5px;
+    }
+
+    button:hover {
+      background-color: rgb(193, 164, 141);
+    }
+
+    #result, #history {
+      margin-top: 20px;
+      font-size: 16px;
+      color: rgb(52, 52, 52);
+      text-align: left;
+    }
+
+    canvas {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <h1>📷 实时情绪识别</h1>
-  <video id="video" width="320" height="240" autoplay></video><br>
-  <button onclick="captureAndSend()">拍照并分析</button>
-  <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
-  <div id="result">请点击按钮进行分析</div>
+  <div id="card">
+    <h1>📷 Real-Time Emotion Detector</h1>
+    <video id="video" width="320" height="240" autoplay></video><br>
+    <button onclick="captureAndSend()">Capture and Analyze</button>
+    <button onclick="loadHistory()">Show History</button>
+    <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+    <div id="result">Click the button to start analysis</div>
+    <div id="history"></div>
+  </div>
 
   <script>
     const video = document.getElementById('video');
     const canvas = document.getElementById('canvas');
     const resultDiv = document.getElementById('result');
+    const historyDiv = document.getElementById('history');
 
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => { video.srcObject = stream; })
-      .catch(err => { alert("无法访问摄像头：" + err); });
+      .catch(err => { alert("Cannot access camera: " + err); });
 
     function captureAndSend() {
       const context = canvas.getContext('2d');
@@ -36,11 +119,60 @@
       })
       .then(response => response.json())
       .then(data => {
-        resultDiv.innerHTML = `<strong>识别结果：</strong> ${data.dominant_emotion}<br><pre>${JSON.stringify(data.emotion_scores, null, 2)}</pre>`;
+        if (data.error) {
+          resultDiv.innerHTML = "❌ Error: " + data.error;
+        } else {
+            resultDiv.innerHTML = `
+  <h2>🎯 Detected Emotion: <span style="color: #b46936">${data.dominant_emotion}</span></h2>
+  <table style="width:100%; margin-top: 10px; text-align:left;">
+    ${Object.entries(data.emotion_scores).map(
+      ([key, val]) => `<tr><td>${key}</td><td>${val.toFixed(2)}%</td></tr>`
+    ).join("")}
+  </table>
+`;
+
+          loadHistory();  // Refresh history after new result
+        }
       })
       .catch(err => {
-        resultDiv.innerHTML = "❌ 分析失败：" + err;
+        resultDiv.innerHTML = "❌ Analysis failed: " + err;
       });
+    }
+
+    function loadHistory() {
+      fetch("/history")
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            historyDiv.innerHTML = "❌ Failed to load history: " + data.error;
+            return;
+          }
+
+          if (data.length === 0) {
+            historyDiv.innerHTML = "📭 No analysis history yet.";
+            return;
+          }
+
+          historyDiv.innerHTML = `
+                    <h3>📜 Recent Analysis</h3>
+                    <div style="max-height: 300px; overflow-y: auto; text-align: left;">
+                        ${data.map(item => `
+                        <div style="padding: 10px; border-bottom: 1px solid #ccc;">
+                            <strong>${item.dominant_emotion}</strong> at ${new Date(item.timestamp).toLocaleString()}<br>
+                            <ul style="margin: 5px 0 0 10px; padding: 0;">
+                            ${Object.entries(item.emotion_scores).map(
+                                ([k, v]) => `<li>${k}: ${v.toFixed(2)}%</li>`
+                            ).join("")}
+                            </ul>
+                        </div>
+                        `).join("")}
+                    </div>
+                    `;
+
+        })
+        .catch(err => {
+          historyDiv.innerHTML = "❌ Failed to load history: " + err;
+        });
     }
   </script>
 </body>
