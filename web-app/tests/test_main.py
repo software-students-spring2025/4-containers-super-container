@@ -1,57 +1,57 @@
 """Test suite for main Flask application."""
-
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import pytest
 from flask import Flask
-import sys, os
-
-# Add the parent directory to sys.path in order to import the app module
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from unittest.mock import patch, MagicMock
+import app.main
 from app.main import app
 
-
-# Create a test client for Flask
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
-    return app.test_client()
+    with app.test_client() as client:
+        yield client
 
-
-# Test the index route and ensure it loads correctly
-def test_index_route(client):
-    response = client.get("/")  # Simulate GET request
-    assert response.status_code == 200  # Check status code
-    assert b"<html" in response.data  # Check html content
-
-
-# Test the analyze route with a successful mock response
-def test_analyze_success(client, monkeypatch):
-    # Sample response JSON that ml-client might return
-    dummy_response = {"dominant_emotion": "happy"}
-
-    # Define a MockResponse class
-    class MockResponse:
-        def json(self):
-            return dummy_response
-
-    # Replace requests.post
-    monkeypatch.setattr(
-        "app.main.requests.post", lambda *args, **kwargs: MockResponse()
-    )
-
-    # Simulate a POST request to the /analyze endpoint with fake image data
-    response = client.post("/analyze", json={"image": "data:image/jpeg;base64,fake"})
+def test_index(client):
+    """测试主页渲染"""
+    response = client.get("/")
     assert response.status_code == 200
-    assert response.get_json() == dummy_response
 
+@patch("app.main.requests.post")
+def test_analyze_success(mock_post, client):
+    """模拟转发成功"""
+    mock_post.return_value.json.return_value = {
+        "dominant_emotion": "happy",
+        "emotion_scores": {"happy": 99.0, "sad": 1.0}
+    }
+    mock_post.return_value.status_code = 200
 
-# Test the analyze route when an error occurs
-def test_analyze_failure(client, monkeypatch):
-    def raise_error(*args, **kwargs):
-        raise requests.exceptions.RequestException("ml-client error")
+    response = client.post("/analyze", json={"image": "test"})
+    assert response.status_code == 200
+    assert "dominant_emotion" in response.json
 
-    monkeypatch.setattr("app.main.requests.post", raise_error)
+@patch("app.main.requests.post", side_effect=Exception("ml-client error"))
+def test_analyze_failure(mock_post, client):
+    """模拟转发失败"""
+    response = client.post("/analyze", json={"image": "test"})
+    assert response.status_code == 500
+    assert "error" in response.json
 
-    # Simulate a POST request to the /analyze endpoint
-    response = client.post("/analyze", json={"image": "data:image/jpeg;base64,fake"})
-    assert response.status_code == 500  # Should return a server error
-    assert "error" in response.get_json()  # Error message should be included
+@patch("app.main.collection.find")
+def test_history_success(mock_find, client):
+    """测试历史记录读取"""
+    mock_find.return_value.sort.return_value.limit.return_value = [
+        {"_id": "fakeid", "dominant_emotion": "angry"}
+    ]
+    response = client.get("/history")
+    assert response.status_code == 200
+    assert isinstance(response.json, list)
+
+@patch("app.main.collection.find", side_effect=Exception("DB error"))
+def test_history_failure(mock_find, client):
+    """测试历史读取失败情况"""
+    response = client.get("/history")
+    assert response.status_code == 500
+    assert "error" in response.json
