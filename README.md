@@ -1,149 +1,119 @@
-## Overview
+# Environment Sensor Analysis System
 
-**EmotionSense** is a modular, containerized system that combines real-time data capture, machine learning-based emotion analysis, and interactive data visualization. Designed for portability and scalability, the system leverages Docker to manage three interoperable services:
+A containerized application that collects environmental sensor data, performs machine learning analysis, and displays the results through a web interface. The system consists of three interconnected Docker containers:
 
-- 🧠 **Machine Learning Client**: A Python-based backend service that uses a webcam to capture images, analyze facial expressions using [DeepFace](https://github.com/serengil/deepface), and persist results (dominant emotion + emotion scores) to a MongoDB database. It runs fully independently and can be triggered periodically or on demand.
-
-- 🌐 **Web App**: A Flask-powered frontend dashboard that connects to the same MongoDB instance. It displays visualizations and analytics of the emotion data collected by the ML client. Users can view emotion trends, individual capture events, and metadata in an accessible and responsive UI.
-
-- 🗄️ **MongoDB Database**: A persistent NoSQL data store running in a Docker container, shared by both the ML client and the web app. It stores the timestamped emotion analyses, image file paths, and emotion score vectors.
-
-This system is especially useful for applications such as:
-- Emotion-aware smart interfaces
-- Human-computer interaction research
-- Mental health and mood tracking
-- Interactive art and installations
-
-The full stack runs in isolated containers orchestrated via `docker-compose`, making it easy to deploy, scale, and test across platforms.
-
-
+1. **MongoDB Database** - Stores sensor readings and analysis results
+2. **Machine Learning Client** - Simulates sensor data collection and performs ML-based analysis
+3. **Web Application** - Displays the data and analysis results in a user-friendly dashboard
 
 ## Team Members
 
 - [Xingjian Zhang](https://github.com/ScottZXJ123)
-- [Hao Yang](https://github.com/Hao-Yang-Hao)
-- [Yukun Dong](https://github.com/abccdyk)
-- [Teammate 4](https://github.com/danielk98)
+- [Team Member 2](https://github.com/TeamMember2)
+- [Team Member 3](https://github.com/TeamMember3)
+- [Team Member 4](https://github.com/TeamMember4)
 
+## System Architecture
 
-## 🛠 How to Configure and Run the Full Project (Cross-Platform Guide)
+The system uses a microservices architecture with three containers:
 
-These instructions ensure that **any developer on any platform** (Windows, macOS, Linux) can configure and run all parts of the EmotionSense system successfully.
+- **MongoDB**: Stores all sensor data and analysis results
+- **ML Client**: Python application that:
+  - Collects sensor data (temperature, humidity, light levels)
+  - Analyzes the data using machine learning (Random Forest classifier)
+  - Stores results in MongoDB
+- **Web App**: Flask-based web application that:
+  - Retrieves data from MongoDB
+  - Displays sensor readings and analysis in a dashboard
+  - Provides API endpoints for data access
 
----
+## Setup and Installation
 
-### 1️⃣ Prerequisites
+### Prerequisites
 
-Before starting, ensure the following tools are installed:
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [Python 3.8+](https://www.python.org/downloads/)
-- [pip](https://pip.pypa.io/en/stable/)
-- [Git](https://git-scm.com/)
-- Webcam access (required for ML client to capture real-time images)
+### Running the System
 
-To verify installations:
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/Your-Username/4-containers-super-container.git
+   cd 4-containers-super-container
+   ```
 
-```bash
-python --version
-docker --version
-git --version
+2. Start all containers with Docker Compose:
+   ```bash
+   docker-compose down
+   docker-compose up --build
+   ```
+
+3. Access the web dashboard:
+   - Open your browser and go to [http://localhost:8080](http://localhost:8080)
+
+### Container Details
+
+- **MongoDB**: Runs on port 27017 (accessible within the container network)
+- **ML Client**: Automatically collects and analyzes data every 10 seconds
+- **Web App**: Accessible at http://localhost:8080
+
+## Development
+
+### Environment Variables
+
+The system uses the following environment variables (already configured in docker-compose.yml):
+
+- `MONGO_URI`: MongoDB connection string (default: `mongodb://mongodb:27017`)
+
+### Project Structure
+
+```
+.
+├── docker-compose.yml          # Docker Compose configuration
+├── machine-learning-client/    # ML client code
+│   ├── Dockerfile
+│   ├── main.py                 # Main ML client application
+│   ├── requirements.txt        # Python dependencies
+│   └── test_ml_client.py       # Unit tests
+└── web-app/                    # Flask web application
+    ├── Dockerfile
+    ├── app.py                  # Main Flask application
+    ├── requirements.txt        # Python dependencies
+    ├── templates/              # HTML templates
+    │   ├── error.html
+    │   └── index.html
+    └── test_app.py             # Unit tests
 ```
 
-### 2️⃣ Clone the Repository
+### Running Tests Locally
 
-```bash
-git clone https://github.com/software-students-spring2025/4-containers-super-container.git
-cd 4-containers-super-container
-```
-### 3️⃣ Create a Virtual Environment
-
-Windows：
-
-python -m venv venv
-venv\\Scripts\\activate 
-
-macOS / Linux：
-
-python3 -m venv venv
-source venv/bin/activate
-
-### 4️⃣ Install Python Dependencies
-
-```bash
-pip install -r machine-learning-client/requirements.txt
-pip install -r web-app/requirements.txt
-```
-
-### 5️⃣ Create and Configure the Environment File
-
-Create a file named .env in the root directory with the following content:
-
-```env
-MONGO_URI=mongodb://localhost:27017/emotion_db
-SECRET_KEY=changeme123
-```
-
-### 6️⃣ Run MongoDB Container
-
-```bash
-docker run --name mongodb -d -p 27017:27017 mongo
-```
-
-You can confirm MongoDB is running using:
-
-```bash
-docker ps
-```
-
-### 7️⃣ Run Machine Learning Client (Local Debug)
+#### Machine Learning Client
 
 ```bash
 cd machine-learning-client
-python main.py
+pip install -r requirements.txt
+pytest --cov=.
 ```
-This will:
 
-Activate webcam
-
-Capture an image
-
-Analyze emotional expression via DeepFace
-
-Save metadata and results to MongoDB
-
-Save image locally in the images/ folder
-
-### 8️⃣ Run Web App (Local Debug)
+#### Web App
 
 ```bash
-cd ../web-app
-flask run
-```
-Visit http://localhost:5000 to view the web dashboard.
-
-### 9️⃣ Run Everything Using Docker Compose (Deployment Mode)
-Once each component works independently, you can launch the full system using:
-
-```bash
-docker-compose up --build
+cd web-app
+pip install -r requirements.txt
+pytest --cov=.
 ```
 
-This will:
+## APIs
 
-Spin up the MongoDB, ML Client, and Web App in separate containers
+The web app provides the following API endpoints:
 
-Set up internal networking between services
+- `GET /api/readings`: Returns the latest 50 sensor readings as JSON
+- `GET /api/stats`: Returns statistics about the collected data
 
-Automatically expose required ports (e.g., 5000 for the web)
+## Extending the System
 
-To stop:
-```bash
-docker-compose down
-```
+To extend the system with additional sensors or analysis:
 
-## To run unit tests:
-
-```bash
-pytest  # from root or within client/web-app folders
-```
+1. Modify the `generate_sensor_data()` function in `machine-learning-client/main.py` to include new sensor types
+2. Update the `analyze_data()` function to perform additional analysis
+3. Update the web app templates to display the new data
