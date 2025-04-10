@@ -1,8 +1,15 @@
 from flask import Flask, render_template, request, jsonify
+from pymongo import MongoClient
 import requests
 
 # Create the Flask app instance
 app = Flask(__name__)
+
+
+# MongoDB connection
+client = MongoClient("mongodb+srv://js12154:js12154@simpletask.7k4oz.mongodb.net/")
+db = client["EmotionDetector"]
+collection = db["emotions"]
 
 
 # Route for the homepage
@@ -23,6 +30,16 @@ def analyze():
     except Exception as error:
         # If anything goes wrong, return an error message with status code 500
         return jsonify({"error": str(error)}), 500
+
+
+# Load data history
+@app.route('/view-data')
+def view_data():
+    try:
+        data = list(collection.find())
+        return render_template('index.html', data=data)
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 
 # Start the Flask app on host 0.0.0.0 and port 8888
