@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Emotion Detector</title>
+  <title>Emotion recognition system</title>
   <style>
     body {
   font-family: sans-serif;
@@ -105,7 +105,9 @@
 
     navigator.mediaDevices.getUserMedia({ video: true })
       .then(stream => { video.srcObject = stream; })
+
       .catch(err => { alert("Cannot access camera: " + err); });
+
 
     function captureAndSend() {
       const context = canvas.getContext('2d');
@@ -119,6 +121,7 @@
       })
       .then(response => response.json())
       .then(data => {
+
         if (data.error) {
           resultDiv.innerHTML = "❌ Error: " + data.error;
         } else {
@@ -138,6 +141,7 @@
         resultDiv.innerHTML = "❌ Analysis failed: " + err;
       });
     }
+
 
     function loadHistory() {
       fetch("/history")

@@ -9,6 +9,7 @@ services:
       - ml-client
       - mongo-db
 
+
   ml-client:
     build: ./machine-learning-client
     ports:
