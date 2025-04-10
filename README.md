@@ -8,6 +8,7 @@ A containerized application that analyzes facial emotions using deep learning an
 
 1. **Machine Learning Client** - Performs facial emotion analysis using DeepFace
 2. **Web Application** - Provides a user interface for capturing and analyzing images
+3. **Database** - Stores pictures users take by MongoDB
 
 ## Team Members
 
