@@ -5,6 +5,8 @@ import cv2
 import base64
 import uuid
 from deepface import DeepFace
+from pymongo import MongoClient
+import datetime
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -12,6 +14,13 @@ app = Flask(__name__)
 # Set upload folder and create a new one if it doesn't exist
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+# MongoDB connection
+MONGO_URI = "mongodb+srv://js12154:js12154@simpletask.7k4oz.mongodb.net/"
+client = MongoClient(MONGO_URI)
+db = client["EmotionDetector"]
+collection = db["emotions"]
 
 
 # Route handles POST requests to analyze facial emotions
@@ -35,6 +44,13 @@ def analyze():
         # Analyze the image with DeepFace
         # Set 'enforce_detection' to false to avoid errors on poor-quality images
         result = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)[0]
+
+        # Prepare record
+        dom = {"dominant_emotion": result["dominant_emotion"]}
+        emo = result["emotion"]
+        time = {"timestamp": datetime.datetime.utcnow()}
+        merge = dom | emo | time
+        insert = collection.insert_one(merge)
 
         # Return dominant emotion and emotion score dictionary
         return jsonify(
