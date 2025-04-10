@@ -4,7 +4,7 @@ services:
   web-app:
     build: ./web-app
     ports:
-      - "8081:5000"
+      - "8888:8888"
     depends_on:
       - ml-client
       - mongo-db
@@ -13,7 +13,7 @@ services:
   ml-client:
     build: ./machine-learning-client
     ports:
-      - "5002:5002"
+      - "5001:5001"
     depends_on:
       - mongo-db
 
