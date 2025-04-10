@@ -125,3 +125,8 @@ pytest --cov=.
 - Facial emotion detection (happiness, sadness, anger, fear, surprise, disgust, neutral)
 - Display of emotion confidence scores
 - Modern, responsive UI
+
+## Projects Sprint
+
+![Sprint1](https://github.com/orgs/software-students-spring2025/projects/159/views/1)
+![Sprint2](https://github.com/orgs/software-students-spring2025/projects/209)
