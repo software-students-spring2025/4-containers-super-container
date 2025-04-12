@@ -5,7 +5,7 @@ from pymongo import MongoClient
 
 app = Flask(__name__)
 
-# MongoDB 连接（容器内）
+
 client = MongoClient("mongodb://mongo-db:27017/")
 db = client["emotion_analysis"]
 collection = db["results"]
@@ -29,6 +29,19 @@ def analyze():
     try:
         response = requests.post("http://ml-client:5002/analyze", json=data)
         return jsonify(response.json())
+    except Exception as error:
+        return jsonify({"error": str(error)}), 500
+
+
+# Route for retrieving history
+@app.route("/history")
+def history():
+    try:
+        results = list(collection.find().sort("_id", -1).limit(10))
+        for result in results:
+            if "_id" in result:
+                result["_id"] = str(result["_id"])
+        return jsonify(results)
     except Exception as error:
         return jsonify({"error": str(error)}), 500
 
