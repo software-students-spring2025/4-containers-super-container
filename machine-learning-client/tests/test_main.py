@@ -10,17 +10,21 @@ from unittest.mock import patch, MagicMock, mock_open
 # Add parent directory to Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# Import app with all dependencies mocked
-with patch.dict(
-    "sys.modules",
-    {
-        "cv2": MagicMock(),
-        "deepface": MagicMock(),
-        "pymongo": MagicMock(),
-    },
-):
-    import app.main
-    from app.main import app
+# Import modules with mocks to prevent actual import of problematic libraries
+# These need to be mocked before any imports that would use them
+cv2_mock = MagicMock()
+deepface_mock = MagicMock()
+pymongo_mock = MagicMock()
+
+sys.modules["cv2"] = cv2_mock
+sys.modules["deepface"] = deepface_mock
+sys.modules["pymongo"] = pymongo_mock
+
+# Import app after mocking dependencies
+# pylint: disable=wrong-import-position
+from app.main import app
+
+# pylint: enable=wrong-import-position
 
 
 class TestMLClient(unittest.TestCase):
@@ -32,6 +36,7 @@ class TestMLClient(unittest.TestCase):
         # Configure app for testing
         app.config["TESTING"] = True
 
+    # pylint: disable=too-many-arguments
     @patch("app.main.DeepFace.analyze")
     @patch("app.main.cv2.imread")
     @patch("app.main.collection.insert_one")
@@ -54,8 +59,10 @@ class TestMLClient(unittest.TestCase):
         # Mock file path
         mock_path_join.return_value = "uploads/test_uuid.jpg"
 
-        # Mock image reading
-        mock_imread.return_value = "fake_image_data"
+        # Mock image reading - create a mock image with shape attribute
+        mock_image = MagicMock()
+        mock_image.shape = (300, 400, 3)  # Height, width, channels
+        mock_imread.return_value = mock_image
 
         # Mock DeepFace analysis result
         mock_deepface_analyze.return_value = [
@@ -103,8 +110,10 @@ class TestMLClient(unittest.TestCase):
         mock_deepface_analyze.assert_called_once()
         mock_insert.assert_called_once()
 
+    # pylint: enable=too-many-arguments
+
     @patch("builtins.open", side_effect=IOError("Failed to write file"))
-    def test_analyze_file_write_error(self, mock_open):
+    def test_analyze_file_write_error(self, mock_file_open):
         """Test error handling when file writing fails."""
         # Create test data
         test_image_base64 = base64.b64encode(b"test_image_content").decode("utf-8")
@@ -120,10 +129,12 @@ class TestMLClient(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         data = json.loads(response.data)
         self.assertIn("error", data)
+        # Verify mock was called
+        mock_file_open.assert_called()
 
     @patch("app.main.cv2.imread", return_value=None)
     @patch("builtins.open", new_callable=mock_open)
-    def test_analyze_image_read_error(self, mock_open, mock_imread):
+    def test_analyze_image_read_error(self, mock_file_open, mock_imread):
         """Test error handling when image reading fails."""
         # Create test data
         test_image_base64 = base64.b64encode(b"test_image_content").decode("utf-8")
@@ -139,14 +150,22 @@ class TestMLClient(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         data = json.loads(response.data)
         self.assertIn("error", data)
+        # Verify mocks were called
+        mock_file_open.assert_called()
+        mock_imread.assert_called()
 
     @patch("app.main.DeepFace.analyze", side_effect=Exception("Analysis failed"))
     @patch("app.main.cv2.imread")
     @patch("builtins.open", new_callable=mock_open)
     def test_analyze_deepface_error(
-        self, mock_open, mock_imread, mock_deepface_analyze
+        self, mock_file_open, mock_imread, mock_deepface_analyze
     ):
         """Test error handling when DeepFace analysis fails."""
+        # Create mock image with shape
+        mock_image = MagicMock()
+        mock_image.shape = (300, 400, 3)
+        mock_imread.return_value = mock_image
+
         # Create test data
         test_image_base64 = base64.b64encode(b"test_image_content").decode("utf-8")
 
@@ -161,6 +180,10 @@ class TestMLClient(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         data = json.loads(response.data)
         self.assertIn("error", data)
+        # Verify mocks were called
+        mock_file_open.assert_called()
+        mock_imread.assert_called()
+        mock_deepface_analyze.assert_called()
 
     def test_analyze_invalid_request(self):
         """Test error handling for invalid request format."""
