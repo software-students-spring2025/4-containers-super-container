@@ -220,7 +220,50 @@
       });
     }
 
+    // Function to load history data
+    function loadHistory() {
+      fetch('/history')
+        .then(response => response.json())
+        .then(data => {
+          // Create history section if it doesn't exist
+          if (!document.getElementById('history')) {
+            const historyDiv = document.createElement('div');
+            historyDiv.id = 'history';
+            historyDiv.innerHTML = '<h3>Recent Analysis History</h3>';
+            resultDiv.after(historyDiv);
+          }
+          
+          const historyDiv = document.getElementById('history');
+          
+          if (data.length === 0) {
+            historyDiv.innerHTML = '<h3>Recent Analysis History</h3><p>No history data available</p>';
+            return;
+          }
+          
+          let historyHtml = '<h3>Recent Analysis History</h3>';
+          historyHtml += '<div class="dataPanel">';
+          
+          data.slice(0, 5).forEach(item => {
+            historyHtml += `<div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #ccc;">
+              <p><strong>Emotion:</strong> ${item.dominant_emotion || 'Unknown'}</p>
+              ${item.timestamp ? `<p><strong>Time:</strong> ${new Date(item.timestamp).toLocaleString()}</p>` : ''}
+            </div>`;
+          });
+          
+          historyHtml += '</div>';
+          historyDiv.innerHTML = historyHtml;
+        })
+        .catch(err => {
+          console.error('Error loading history:', err);
+          if (document.getElementById('history')) {
+            document.getElementById('history').innerHTML = 
+              '<h3>Recent Analysis History</h3><p>Error loading history data</p>';
+          }
+        });
+    }
 
+    // Load history when page loads
+    document.addEventListener('DOMContentLoaded', loadHistory);
   </script>
 </body>
 </html>
