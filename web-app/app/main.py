@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import requests
-from pymongo import MongoClient
 
 app = Flask(__name__)
 
