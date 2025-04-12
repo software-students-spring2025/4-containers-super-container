@@ -22,7 +22,7 @@ A containerized application that analyzes facial emotions using deep learning an
 The system uses a microservices architecture with two main containers:
 
 - **ML Client**: Python application that:
-  - Receives images via a REST API
+  - Receives images via camera
   - Analyzes facial emotions using DeepFace
   - Returns emotion classification results
 - **Web App**: Flask-based web application that:
