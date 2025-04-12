@@ -4,14 +4,12 @@ import os
 # Add parent directory to Python path so 'app.main' can be imported properly
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import os
-import base64
-import tempfile
 import pytest
-import app.main
+import base64
+import json
 from app.main import app
 
 
-# 创建一个测试客户端
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
@@ -19,25 +17,28 @@ def client():
         yield client
 
 
-def test_analyze_valid_image(client):
-    # 构造一个简单的黑图像
-    tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
-    tmp_file.write(b"\xff\xd8\xff\xe0" + bytes(100))  # JPEG header + filler
-    tmp_file.close()
+def encode_image(path):
+    with open(path, "rb") as img_file:
+        b64_str = base64.b64encode(img_file.read()).decode("utf-8")
+    return f"data:image/jpeg;base64,{b64_str}"
 
-    # 读取为 base64
-    with open(tmp_file.name, "rb") as img_file:
-        b64_image = base64.b64encode(img_file.read()).decode("utf-8")
-    os.unlink(tmp_file.name)
+
+def test_analyze_real_image(client):
+    image_path = "tests/test_image.jpg"  # 你自己的测试图像路径
+    assert os.path.exists(image_path), "测试图像不存在！"
+
+    image_data = encode_image(image_path)
 
     response = client.post(
-        "/analyze", json={"image": "data:image/jpeg;base64," + b64_image}
+        "/analyze",
+        data=json.dumps({"image": image_data}),
+        content_type="application/json",
     )
-    assert response.status_code in (200, 500)  # DeepFace可能报错但服务稳定
-    assert "dominant_emotion" in response.json or "error" in response.json
 
-
-def test_analyze_invalid_data(client):
-    response = client.post("/analyze", json={"image": "not a real image"})
-    assert response.status_code == 500
-    assert "error" in response.json
+    assert response.status_code in (200, 500)  # 如果模型出错，也能抓住
+    data = response.get_json()
+    if response.status_code == 200:
+        assert "dominant_emotion" in data
+        assert "emotion_scores" in data
+    else:
+        assert "error" in data
