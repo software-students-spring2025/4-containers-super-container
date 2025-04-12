@@ -34,7 +34,9 @@ def test_analyze_success(mock_post, client):
     mock_post.return_value.status_code = 200
 
     response = client.post("/analyze", json={"image": "test"})
-    mock_post.assert_called_once_with("http://ml-client:5002/analyze", json={"image": "test"})
+    mock_post.assert_called_once_with(
+        "http://ml-client:5002/analyze", json={"image": "test"}
+    )
     assert response.status_code == 200
     assert "dominant_emotion" in response.json
 
@@ -75,18 +77,13 @@ def test_history_failure(mock_find, client):
 def test_view_data_success(mock_find, client):
     """测试数据查看功能"""
     mock_find.return_value = [
-        {
-            "_id": "fakeid1",
-            "dominant_emotion": "happy",
-            "happy": 95.0,
-            "sad": 5.0
-        }
+        {"_id": "fakeid1", "dominant_emotion": "happy", "happy": 95.0, "sad": 5.0}
     ]
-    
+
     response = client.get("/view-data")
-    
+
     mock_find.assert_called_once()
-    
+
     assert response.status_code == 200
     assert b"Data Recorded" in response.data
 
@@ -95,7 +92,7 @@ def test_view_data_success(mock_find, client):
 def test_view_data_failure(mock_find, client):
     """测试数据查看失败情况"""
     response = client.get("/view-data")
-    
+
     mock_find.assert_called_once()
-    
+
     assert "Error:" in response.get_data(as_text=True)

@@ -31,7 +31,7 @@ def index():
 @app.route("/analyze", methods=["POST"])
 def analyze():
     """Process uploaded image and send to ML client for emotion analysis.
-    
+
     Returns:
         JSON response with emotion analysis results or error message
     """
@@ -46,7 +46,7 @@ def analyze():
 @app.route("/history")
 def history():
     """Retrieve emotion analysis history from database.
-    
+
     Returns:
         JSON list of past analysis results
     """
@@ -63,7 +63,7 @@ def history():
 @app.route("/view-data")
 def view_data():
     """Render page with all stored emotion analysis data.
-    
+
     Returns:
         Rendered HTML template with data
     """
