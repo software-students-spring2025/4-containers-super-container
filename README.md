@@ -4,7 +4,7 @@
 ![ml-client-ci](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/ml-client-ci.yml/badge.svg)
 ![web-app-ci](https://github.com/software-students-spring2025/4-containers-super-container/actions/workflows/web-app-ci.yml/badge.svg)
 
-A containerized application that analyzes facial emotions using deep learning and displays results through a web interface. The system consists of two Docker containers working together:
+A containerized application that analyzes facial emotions using deep learning and displays results through a web interface. The system consists of three Docker containers working together:
 
 1. **Machine Learning Client** - Performs facial emotion analysis using DeepFace
 2. **Web Application** - Provides a user interface for capturing and analyzing images
@@ -19,7 +19,7 @@ A containerized application that analyzes facial emotions using deep learning an
 
 ## System Architecture
 
-The system uses a microservices architecture with two main containers:
+The system uses a microservices architecture with three main containers:
 
 - **ML Client**: Python application that:
   - Receives images via camera
