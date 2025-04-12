@@ -35,7 +35,7 @@ def test_analyze_success(mock_post, client):
 
     response = client.post("/analyze", json={"image": "test"})
     mock_post.assert_called_once_with(
-        "http://ml-client:5002/analyze", json={"image": "test"}
+        "http://ml-client:5002/analyze", json={"image": "test"}, timeout=10
     )
     assert response.status_code == 200
     assert "dominant_emotion" in response.json
