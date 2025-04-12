@@ -86,17 +86,22 @@
     }
 
     .dataPanel {
-      margin-top: 20px;
-      text-align: left;
-      height: 200px;
-      overflow-y: auto;
-      font-size: 14px;
-      background-color: rgb(230, 215, 202);
+      margin: 16px 8px;
+      padding: 16px 20px;
+      background-color: #f0dfd1;
       border-radius: 10px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      width: 90%;
+      font-size: 15px;
+      line-height: 1.6;
+      width: 95%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      transition: 0.2s ease;
     }
+    
+    .dataPanel:hover {
+      background-color: #e8d4c5;
+      transform: scale(1.01);
+    }
+    
 
     #allData {
       position: absolute;
@@ -163,15 +168,16 @@
         <div id="dataTitle">Data Recorded:</div>
         <a href="/"><div id="closeButton">✖</div></a>
       </div>
-      {% for doc in data %}
+      {% for doc in data%}
       <div class="dataPanel">
         {% for key, value in doc.items() %}
-          {% if key != "_id" %}
-          <p><strong>{{ key }}:</strong> {{ value }}</p>
+          {% if key != "_id" and key != "timestamp" %}
+            <p><strong>{{ key }}:</strong> {{ value }}</p>
           {% endif %}
         {% endfor %}
       </div>
       {% endfor %}
+
     </div>
     {% endif %}
   </div>
