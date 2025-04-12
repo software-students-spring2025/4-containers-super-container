@@ -33,19 +33,6 @@ def analyze():
         return jsonify({"error": str(error)}), 500
 
 
-# Route for retrieving history
-@app.route("/history")
-def history():
-    try:
-        results = list(collection.find().sort("_id", -1).limit(10))
-        for result in results:
-            if "_id" in result:
-                result["_id"] = str(result["_id"])
-        return jsonify(results)
-    except Exception as error:
-        return jsonify({"error": str(error)}), 500
-
-
 # Load data history
 @app.route("/view-data")
 def view_data():
