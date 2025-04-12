@@ -5,7 +5,7 @@ import base64
 import uuid
 from deepface import DeepFace
 from pymongo import MongoClient
-from datetime import datetime
+import datetime
 
 app = Flask(__name__)
 
@@ -18,6 +18,14 @@ db = client["emotion_analysis"]
 collection = db["results"]
 
 
+# MongoDB connection
+MONGO_URI = "mongodb+srv://js12154:js12154@simpletask.7k4oz.mongodb.net/"
+client = MongoClient(MONGO_URI)
+db = client["EmotionDetector"]
+collection = db["emotions"]
+
+
+# Route handles POST requests to analyze facial emotions
 @app.route("/analyze", methods=["POST"])
 def analyze():
     try:
@@ -33,15 +41,15 @@ def analyze():
         img = cv2.imread(filepath)
         result = DeepFace.analyze(img, actions=["emotion"], enforce_detection=False)[0]
 
-        # 保存到 MongoDB
-        record = {
-            "timestamp": datetime.utcnow(),
-            "dominant_emotion": result["dominant_emotion"],
-            "emotion_scores": result["emotion"],
-            "image_path": filename,
-        }
-        collection.insert_one(record)
+        # Prepare record
+        dom = {"dominant_emotion": result["dominant_emotion"]}
+        emo = result["emotion"]
+        time = {"timestamp": datetime.datetime.utcnow()}
+        merge = dom | emo | time
+        insert = collection.insert_one(merge)
+        print(insert)
 
+        # Return dominant emotion and emotion score dictionary
         return jsonify(
             {
                 "dominant_emotion": result["dominant_emotion"],

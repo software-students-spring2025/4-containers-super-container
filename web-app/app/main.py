@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from pymongo import MongoClient
 import requests
 from pymongo import MongoClient
 
@@ -10,6 +11,13 @@ db = client["emotion_analysis"]
 collection = db["results"]
 
 
+# MongoDB connection
+client = MongoClient("mongodb+srv://js12154:js12154@simpletask.7k4oz.mongodb.net/")
+db = client["EmotionDetector"]
+collection = db["emotions"]
+
+
+# Route for the homepage
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -25,17 +33,16 @@ def analyze():
         return jsonify({"error": str(error)}), 500
 
 
-@app.route("/history", methods=["GET"])
-def history():
+# Load data history
+@app.route("/view-data")
+def view_data():
     try:
-        # 获取最新10条记录
-        records = list(collection.find().sort("timestamp", -1).limit(10))
-        for record in records:
-            record["_id"] = str(record["_id"])
-        return jsonify(records)
+        data = list(collection.find())
+        return render_template("index.html", data=data)
     except Exception as error:
-        return jsonify({"error": str(error)}), 500
+        return f"Error: {str(error)}"
 
 
+# Start the Flask app on host 0.0.0.0 and port 8888
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=8081)
