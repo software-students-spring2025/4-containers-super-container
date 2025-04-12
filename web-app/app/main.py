@@ -1,3 +1,9 @@
+"""Flask web application for Emotion Detection System.
+
+This module provides the web interface for emotion detection, handling camera access,
+processing images, and displaying analysis results from the ML client.
+"""
+
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import requests
@@ -16,25 +22,34 @@ db = client["EmotionDetector"]
 collection = db["emotions"]
 
 
-# Route for the homepage
 @app.route("/")
 def index():
+    """Render the main page with camera interface."""
     return render_template("index.html")
 
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
+    """Process uploaded image and send to ML client for emotion analysis.
+    
+    Returns:
+        JSON response with emotion analysis results or error message
+    """
     data = request.get_json()
     try:
-        response = requests.post("http://ml-client:5002/analyze", json=data)
+        response = requests.post("http://ml-client:5002/analyze", json=data, timeout=10)
         return jsonify(response.json())
     except Exception as error:
         return jsonify({"error": str(error)}), 500
 
 
-# Route for retrieving history
 @app.route("/history")
 def history():
+    """Retrieve emotion analysis history from database.
+    
+    Returns:
+        JSON list of past analysis results
+    """
     try:
         results = list(collection.find().sort("_id", -1).limit(10))
         for result in results:
@@ -45,9 +60,13 @@ def history():
         return jsonify({"error": str(error)}), 500
 
 
-# Load data history
 @app.route("/view-data")
 def view_data():
+    """Render page with all stored emotion analysis data.
+    
+    Returns:
+        Rendered HTML template with data
+    """
     try:
         data = list(collection.find())
         return render_template("index.html", data=data)
