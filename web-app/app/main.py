@@ -44,4 +44,4 @@ def view_data():
 
 # Start the Flask app on host 0.0.0.0 and port 8888
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8888)
+    app.run(host="0.0.0.0", port=8081)
